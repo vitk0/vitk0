@@ -64,6 +64,8 @@ void PlanWindow::on_semesterComboBox_currentIndexChanged(int index)
 
 void PlanWindow::Fill()
 {
+    db->GetThematicPlan(ui->VkUvcComboBox->currentIndex()+1, db->currentVuses[ui->VUSComboBox->currentIndex()],
+            db->currentSemesters[ui->semesterComboBox->currentIndex()], db->currentDisciplines[ui->disciplineComboBox->currentIndex()] );
     ui->tableWidget->clear();
     ui->tableWidget->setColumnCount(9);
     ui->tableWidget->setRowCount(db->currentThematicPlan->classesCount());
@@ -87,8 +89,6 @@ void PlanWindow::on_disciplineComboBox_currentIndexChanged(int index)
 {
     if (index!=-1)
     {
-        db->GetThematicPlan(ui->VkUvcComboBox->currentIndex()+1, db->currentVuses[ui->VUSComboBox->currentIndex()],
-                db->currentSemesters[ui->semesterComboBox->currentIndex()], db->currentDisciplines[index] );        
         Fill();
     }
 }
@@ -100,13 +100,22 @@ void PlanWindow::on_addButton_clicked()
 
 void PlanWindow::on_tableWidget_cellDoubleClicked(int row, int column)
 {
-    ClassEditWindow* edit = new ClassEditWindow(this);
-
     ui->tableWidget->selectRow(row);
+
+    ClassEditWindow* edit = new ClassEditWindow(this);
 
     if(edit->exec()==QDialog::Accepted)
     {
         Fill();
     }
 
+}
+
+void PlanWindow::on_deleteButton_clicked()
+{
+    if (ui->tableWidget->currentRow()>=0)
+    {
+        db->currentThematicPlan->getClasses()[ui->tableWidget->currentRow()]->remove();
+        Fill();
+    }
 }

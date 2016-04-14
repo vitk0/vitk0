@@ -34,6 +34,8 @@ private slots:
 
     void on_tableWidget_cellDoubleClicked(int row, int column);
 
+    void on_deleteButton_clicked();
+
 private:
     Ui::PlanWindow *ui;
 

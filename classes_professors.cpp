@@ -50,6 +50,52 @@ void classes_professors::setName(const QString &value)
     name = value;
 }
 
+void classes_professors::update(classes_professors *updated)
+{
+    this->idClass = updated->getIdClass();
+    this->firstTime = updated->getFirstTime();
+    this->idProfessor = updated->getIdProfessor();
+    this->name = updated->getName();
+
+    connect();
+
+    query.prepare("UPDATE classes_professors SET first_classes = (?), id_professors = (?) WHERE id_classes_professors=(?)");
+    query.addBindValue(firstTime);
+    query.addBindValue(idProfessor);
+    query.addBindValue(id);
+    query.exec();
+
+    close();
+
+}
+
+void classes_professors::insert(classes_professors *inserted)
+{
+    connect();
+
+    query.prepare("INSERT classes_professors SET id_classes = (?), first_classes = (?), id_professors = (?)");
+    query.addBindValue(inserted->getIdClass());
+    query.addBindValue((int)inserted->getFirstTime());
+    query.addBindValue(inserted->getIdProfessor());
+    query.exec();
+
+    close();
+
+}
+
+void classes_professors::remove()
+{
+    connect();
+
+    query.prepare("DELETE FROM classes_professors WHERE id_classes_professors=(?)");
+    query.addBindValue(id);
+    query.exec();
+
+    close();
+
+    delete this;
+}
+
 classes_professors::classes_professors(int id, int idClass, bool firstTime, int idProfessor, QString name)
 {
     this->id = id;

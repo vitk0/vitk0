@@ -11,6 +11,9 @@ protected:
     Connect();
     void connect();
     void close();
+    void update(Connect*);
+    void insert(Connect*);
+    void remove(Connect*);
 };
 
 #endif // CONNECT_H

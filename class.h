@@ -28,6 +28,13 @@ public:
     ClassType *getClassType() const;
     void setClassType(ClassType *value);
     QVector<classes_professors *> getProfessors() const;
+
+    void update(Class* updated);
+    void insert(Class* inserted);
+    void remove();
+
+    void addProfessor(classes_professors* professor);
+
 };
 
 #endif // CLASS_H

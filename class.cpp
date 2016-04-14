@@ -50,6 +50,59 @@ QVector<classes_professors *> Class::getProfessors() const
     return professors;
 }
 
+void Class::update(Class *updated)
+{
+    this->id = updated->getId();
+    this->number = updated->getNumber();
+    this->classType = updated->getClassType();
+    this->hours = updated->getHours();
+
+    connect();
+
+    query.prepare("UPDATE classes SET number = (?), id_type = (?), hours = (?) WHERE id_classes=(?)");
+    query.addBindValue(number);
+    query.addBindValue(classType->getId());
+    query.addBindValue(hours);
+    query.addBindValue(id);
+    query.exec();
+
+    close();
+
+    foreach(classes_professors* i, professors)
+    {
+        i->remove();
+    }
+
+    foreach(classes_professors* i, updated->getProfessors())
+    {
+        professors.push_back(new classes_professors(i->getId(),i->getIdClass(),i->getFirstTime(),i->getIdProfessor(), i->getName()));
+        i->insert(i);
+    }
+}
+
+void Class::remove()
+{
+    foreach(classes_professors* i, professors)
+    {
+        i->remove();
+    }
+
+    connect();
+
+    query.prepare("DELETE FROM classes WHERE id_classes=(?)");
+    query.addBindValue(id);
+    query.exec();
+
+    close();
+
+    delete this;
+}
+
+void Class::addProfessor(classes_professors *professor)
+{
+    professors.push_back(new classes_professors(professor->getId(),professor->getIdClass(),professor->getFirstTime(),professor->getIdProfessor(), professor->getName()));
+}
+
 Class::Class(int id, int number, ClassType* classType, int hours)
 {
     this->id = id;
