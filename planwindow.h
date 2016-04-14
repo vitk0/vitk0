@@ -15,6 +15,10 @@ class PlanWindow : public QMainWindow
 
 public:
     explicit PlanWindow(QWidget *parent = 0);
+
+    Ui::PlanWindow* GetUI();
+    DataBase* db;
+
     ~PlanWindow();
 
 private slots:
@@ -28,9 +32,12 @@ private slots:
 
     void on_addButton_clicked();
 
+    void on_tableWidget_cellDoubleClicked(int row, int column);
+
 private:
     Ui::PlanWindow *ui;
-    DataBase* db;
+
+    void Fill();
 };
 
 #endif // PLANWINDOW_H

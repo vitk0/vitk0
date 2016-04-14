@@ -69,7 +69,7 @@ ThematicPlan::ThematicPlan(int id, int vkUvc, int vus, int semester,
     query.prepare("SELECT DISTINCT id_classes, number, class_type.id_class_type,\
                    class_type.name, hours FROM classes JOIN class_type\
                    ON class_type.id_class_type = classes.id_type \
-                   WHERE id_thematic_plan=(?)");
+                   WHERE id_thematic_plan=(?) ORDER BY number");
     query.addBindValue(id);
     query.exec();
     while (query.next())
