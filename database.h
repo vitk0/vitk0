@@ -6,6 +6,7 @@
 #include "connect.h"
 #include "discipline.h"
 #include "platoon.h"
+#include "professor.h"
 #include "thematicplan.h"
 
 class DataBase: public Connect
@@ -19,6 +20,9 @@ public:
     QVector<Platoon*> currentPlatoons;
 
     ThematicPlan* currentThematicPlan;
+
+    QVector<ClassType*> classTypes;
+    QVector<Professor*> professors;
 
     void GetVuses(int vkUvc);
     void GetSemesters(int vkUvc, int vus);

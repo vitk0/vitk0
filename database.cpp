@@ -3,6 +3,30 @@
 DataBase::DataBase()
 {
     currentThematicPlan = nullptr;
+
+    connect();
+
+    query.prepare("SELECT * FROM class_type");
+    query.exec();
+
+    while (query.next())
+    {
+        classTypes.push_back(new ClassType(query.value(0).toInt(), query.value(1).toString()));
+    }
+
+    close();
+
+    connect();
+
+    query.prepare("SELECT * FROM professors");
+    query.exec();
+
+    while (query.next())
+    {
+        professors.push_back(new Professor(query.value(0).toInt(), query.value(1).toString()));
+    }
+
+    close();
 }
 
 void DataBase::GetVuses(int vkUvc)

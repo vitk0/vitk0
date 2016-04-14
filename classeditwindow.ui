@@ -39,7 +39,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QLineEdit" name="hoursEdit">
    <property name="geometry">
     <rect>
      <x>130</x>

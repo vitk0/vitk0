@@ -22,7 +22,8 @@ main.cpp\
     classes_professors.cpp \
     class.cpp \
     classtype.cpp \
-    classeditwindow.cpp
+    classeditwindow.cpp \
+    professor.cpp
 
 HEADERS  +=     connect.h \
 planwindow.h \
@@ -33,7 +34,8 @@ planwindow.h \
     classes_professors.h \
     class.h \
     classtype.h \
-    classeditwindow.h
+    classeditwindow.h \
+    professor.h
 
 FORMS    += planwindow.ui \
     classeditwindow.ui
