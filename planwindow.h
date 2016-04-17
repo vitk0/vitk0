@@ -3,6 +3,7 @@
 
 #include "database.h"
 
+#include <QAxObject>
 #include <QMainWindow>
 
 namespace Ui {
@@ -18,6 +19,7 @@ public:
 
     Ui::PlanWindow* GetUI();
     DataBase* db;
+    bool update;
 
     ~PlanWindow();
 
@@ -35,6 +37,8 @@ private slots:
     void on_tableWidget_cellDoubleClicked(int row, int column);
 
     void on_deleteButton_clicked();
+
+    void on_reportButton_clicked();
 
 private:
     Ui::PlanWindow *ui;

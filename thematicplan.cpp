@@ -76,7 +76,7 @@ ThematicPlan::ThematicPlan(int id, int vkUvc, int vus, int semester,
     {
         classes.push_back(new Class(query.value(0).toInt(), query.value(1).toInt(),
                                     new ClassType(query.value(2).toInt(), query.value(3).toString()),
-                                    query.value(4).toInt()));
+                                    query.value(4).toInt(), id));
     }
     close();
 }

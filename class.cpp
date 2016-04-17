@@ -50,6 +50,11 @@ QVector<classes_professors *> Class::getProfessors() const
     return professors;
 }
 
+void Class::clearProfessors()
+{
+    professors.clear();
+}
+
 void Class::update(Class *updated)
 {
     this->id = updated->getId();
@@ -80,6 +85,31 @@ void Class::update(Class *updated)
     }
 }
 
+void Class::insert(Class *inserted)
+{
+    connect();
+
+    query.prepare("INSERT classes SET number = (?), id_type = (?), hours = (?), id_thematic_plan = (?)");
+    query.addBindValue(inserted->getNumber());
+    query.addBindValue(inserted->getClassType()->getId());
+    query.addBindValue(inserted->getHours());
+    query.addBindValue(inserted->getIdThematicPlan());
+    query.exec();
+
+    query.prepare("SELECT last_insert_id()");
+    query.exec();
+    close();
+    query.next();
+    inserted->setId(query.value(0).toInt());
+
+    foreach(classes_professors* i, inserted->getProfessors())
+    {
+        i->setIdClass(inserted->getId());
+        i->insert(i);
+    }
+
+}
+
 void Class::remove()
 {
     foreach(classes_professors* i, professors)
@@ -103,12 +133,28 @@ void Class::addProfessor(classes_professors *professor)
     professors.push_back(new classes_professors(professor->getId(),professor->getIdClass(),professor->getFirstTime(),professor->getIdProfessor(), professor->getName()));
 }
 
-Class::Class(int id, int number, ClassType* classType, int hours)
+int Class::getIdThematicPlan() const
+{
+    return idThematicPlan;
+}
+
+void Class::setIdThematicPlan(int value)
+{
+    idThematicPlan = value;
+}
+
+Class::Class()
+{
+
+}
+
+Class::Class(int id, int number, ClassType* classType, int hours, int idThematicPlan)
 {
     this->id = id;
     this->number = number;
     this->classType = classType;
     this->hours = hours;
+    this->idThematicPlan = idThematicPlan;
 
     connect();
     query.prepare("SELECT DISTINCT id_classes_professors, first_classes, professors.id_professors,\

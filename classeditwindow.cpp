@@ -15,16 +15,11 @@ ClassEditWindow::ClassEditWindow(QWidget *parent) :
     frames.push_back(ui->professorFrame_3);
 
     DataBase* db = ((PlanWindow*)parent)->db;
-    Class* currentClass = db->currentThematicPlan->getClasses()[((PlanWindow*)parent)->GetUI()->tableWidget->currentRow()];
-    ui->numberClassEdit->setText(QString::number(currentClass->getNumber()));
-    ui->hoursEdit->setText(QString::number(currentClass->getHours()));
 
     foreach(ClassType* i, db->classTypes)
     {
         ui->typeClassesComboBox->addItem(i->getName());
     }
-    int index = ui->typeClassesComboBox->findText(currentClass->getClassType()->getName());
-    ui->typeClassesComboBox->setCurrentIndex(index);
 
     foreach(Professor* i, db->professors)
     {
@@ -33,19 +28,40 @@ ClassEditWindow::ClassEditWindow(QWidget *parent) :
             ((QComboBox*)frames[j]->children()[0])->addItem(i->getName());
         }
     }
-
-    professorsCount = currentClass->getProfessors().size();
-    if (professorsCount==3)
-        ui->addProfessorButton->hide();
-    if(professorsCount==1)
-        ui->deleteProfessorButton->hide();
-
-    for (int i=0; i<professorsCount;i++)
+    if (((PlanWindow*)parent)->GetUI()->tableWidget->currentRow()>=0)
     {
-        index = ((QComboBox*)frames[i]->children()[0])->findText(currentClass->getProfessors()[i]->getName());
-        ((QComboBox*)frames[i]->children()[0])->setCurrentIndex(index);
-        ((QCheckBox*)frames[i]->children()[1])->setChecked(currentClass->getProfessors()[i]->getFirstTime());
-        frames[i]->show();
+        Class* currentClass = db->currentThematicPlan->getClasses()[((PlanWindow*)parent)->GetUI()->tableWidget->currentRow()];
+        ui->numberClassEdit->setText(QString::number(currentClass->getNumber()));
+        ui->hoursEdit->setText(QString::number(currentClass->getHours()));
+
+        int index = ui->typeClassesComboBox->findText(currentClass->getClassType()->getName());
+        ui->typeClassesComboBox->setCurrentIndex(index);
+
+        professorsCount = currentClass->getProfessors().size();
+        if (professorsCount==3)
+            ui->addProfessorButton->hide();
+        if(professorsCount==1)
+            ui->deleteProfessorButton->hide();
+
+        for (int i=0; i<professorsCount;i++)
+        {
+            index = ((QComboBox*)frames[i]->children()[0])->findText(currentClass->getProfessors()[i]->getName());
+            ((QComboBox*)frames[i]->children()[0])->setCurrentIndex(index);
+            ((QCheckBox*)frames[i]->children()[1])->setChecked(currentClass->getProfessors()[i]->getFirstTime());
+            frames[i]->show();
+        }
+    }
+    else
+    {
+        ui->typeClassesComboBox->setCurrentIndex(0);
+        professorsCount = 1;
+        ui->deleteProfessorButton->hide();
+        for (int i=0; i<professorsCount;i++)
+        {
+            ((QComboBox*)frames[i]->children()[0])->setCurrentIndex(0);
+            ((QCheckBox*)frames[i]->children()[1])->setChecked(false);
+            frames[i]->show();
+        }
     }
 }
 
@@ -73,15 +89,31 @@ void ClassEditWindow::on_deleteProfessorButton_clicked()
 void ClassEditWindow::on_buttonBox_accepted()
 {
     DataBase* db = ((PlanWindow*)parent())->db;
-    Class* currentClass = db->currentThematicPlan->getClasses()[((PlanWindow*)parent())->GetUI()->tableWidget->currentRow()];
+    Class* currentClass ;
+    if(((PlanWindow*)parent())->GetUI()->tableWidget->currentRow()>=0)
+    {
+        currentClass = db->currentThematicPlan->getClasses()[((PlanWindow*)parent())->GetUI()->tableWidget->currentRow()];
+    }
+    else
+    {
+        currentClass = new Class();
+    }
+
     Class* temp = new Class(currentClass->getId(),ui->numberClassEdit->text().toInt(), db->classTypes[ui->typeClassesComboBox->currentIndex()],
-            ui->hoursEdit->text().toInt());
+            ui->hoursEdit->text().toInt(), db->currentThematicPlan->getId());
+    temp->clearProfessors();
     for(int i=0; i<professorsCount;i++)
     {
     temp->addProfessor(new classes_professors(0,temp->getId(),((QCheckBox*)frames[i]->children()[1])->checkState()==Qt::Checked,
                        db->professors[((QComboBox*)frames[i]->children()[0])->currentIndex()]->getId(),
             db->professors[((QComboBox*)frames[i]->children()[0])->currentIndex()]->getName()));
     }
-
-    currentClass->update(temp);
+    if (((PlanWindow*)parent())->update)
+    {
+        currentClass->update(temp);
+    }
+    else
+    {
+        currentClass->insert(temp);
+    }
 }

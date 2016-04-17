@@ -95,12 +95,23 @@ void PlanWindow::on_disciplineComboBox_currentIndexChanged(int index)
 
 void PlanWindow::on_addButton_clicked()
 {
+    update = false;
+
+    ClassEditWindow* edit = new ClassEditWindow(this);
+
+    if(edit->exec()==QDialog::Accepted)
+    {
+        Fill();
+    }
+
 }
 
 
 void PlanWindow::on_tableWidget_cellDoubleClicked(int row, int column)
 {
     ui->tableWidget->selectRow(row);
+
+    update = true;
 
     ClassEditWindow* edit = new ClassEditWindow(this);
 
@@ -118,4 +129,209 @@ void PlanWindow::on_deleteButton_clicked()
         db->currentThematicPlan->getClasses()[ui->tableWidget->currentRow()]->remove();
         Fill();
     }
+}
+
+void PlanWindow::on_reportButton_clicked()
+{
+    QSqlQuery query;
+
+       QAxObject* excel = new QAxObject( "Excel.Application", 0 );
+       QAxObject* workbooks = excel->querySubObject( "Workbooks" );
+
+     //  excel->setProperty("Visible", true);
+
+      // workbooks->dynamicCall("Add");
+
+       workbooks->dynamicCall("Open (const QString&)",QString("G:\\QtProjects\\build-ReportMaker-Desktop_Qt_5_6_0_MSVC2015_64bit-Debug\\debug\\1.xls"));
+
+       QAxObject * workbook = excel->querySubObject("ActiveWorkBook");
+       QAxObject* sheets = workbook->querySubObject( "Worksheets" );
+
+       int count = 1;// count = sheets->property("Count").toInt();
+
+       for (int i=1; i<=count; i++) //cycle through sheets
+        {
+
+           //sheet pointer
+
+           QAxObject* sheet = sheets->querySubObject( "Item( int )", i );
+
+           QAxObject* cell = sheet->querySubObject("Cells(QVariant,QVariant)", 1, 1);
+
+           /*
+
+
+           con();
+           query.prepare("SELECT id_professors, name FROM professors");
+           query.exec();
+           db.close();
+           int columnCount = 1;//columns->property("Count").toInt();
+           for (int row=2; query.next(); row++)
+           {
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 1);
+               cell->setProperty("Value", QVariant(query.value(1).toString()));
+               delete cell;
+
+               QSqlQuery query1;
+               con();
+               query1.prepare("SELECT DISTINCT thematic_plan.vk_uvc, thematic_plan.vus, thematic_plan.semester\
+                             FROM classes JOIN thematic_plan ON classes.id_thematic_plan = thematic_plan.id_thematic_plan \
+                             WHERE (classes.id_professor1=(?)) OR (classes.id_professor2=(?))");
+               query1.addBindValue(query.value(0));
+               query1.addBindValue(query.value(0));
+               query1.exec();
+               while (query1.next())
+               {
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 2);
+               if(query1.value(0).toInt()==1){
+               cell->setProperty("Value", QVariant("ВК"));
+               }else
+               {
+               cell->setProperty("Value", QVariant("УВЦ"));
+               }
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 3);
+               cell->setProperty("Value", QVariant(query1.value(1).toString()));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 4);
+               cell->setProperty("Value", QVariant(query1.value(2).toInt()));
+               delete cell;
+
+               int currentvk = query1.value(0).toInt();
+               QString currentvus = query1.value(1).toString();
+               int currentsem = query1.value(2).toInt();
+               db.close();
+               con();
+               QSqlQuery query2;
+               query2.prepare("(SELECT id_type, hours, first_class1, id_professor1 FROM classes \
+                               JOIN thematic_plan ON classes.id_thematic_plan = thematic_plan.id_thematic_plan\
+                               WHERE thematic_plan.vk_uvc = (?) AND thematic_plan.vus = (?) AND thematic_plan.semester = (?) AND id_professor1=(?))\
+                               UNION ALL\
+                               (SELECT id_type, hours, first_class2, id_professor2 FROM classes \
+                                JOIN thematic_plan ON classes.id_thematic_plan = thematic_plan.id_thematic_plan\
+                               WHERE thematic_plan.vk_uvc = (?) AND thematic_plan.vus = (?) AND thematic_plan.semester = (?) AND id_professor2=(?))");
+               query2.addBindValue(currentvk);
+               query2.addBindValue(currentvus);
+               query2.addBindValue(currentsem);
+               query2.addBindValue(query.value(0));
+               query2.addBindValue(currentvk);
+               query2.addBindValue(currentvus);
+               query2.addBindValue(currentsem);
+               query2.addBindValue(query.value(0));
+               query2.exec();
+               db.close();
+               int hourslection = 0;
+               int hourspractic = 0;
+               int hourslectiontry = 0;
+               int hourspractictry = 0;
+               int hourshalf = 0;
+               int hourscontrol = 0;
+               int hourszachet = 0;
+               int hoursexam = 0;
+
+               while (query2.next())
+               {
+                   switch (query2.value(0).toInt())
+                   {
+                   case 1:
+                       hourslection += query2.value(1).toInt();
+                       if (query2.value(2).toBool())
+                       {
+                           hourslectiontry += query2.value(1).toInt()*2;
+                       }
+                       else
+                       {
+                           hourslectiontry += query2.value(1).toInt();
+                       }
+                       break;
+                   case 2:
+                       hourspractic += query2.value(1).toInt();
+                       if (query2.value(2).toBool())
+                       {
+                           hourspractictry += query2.value(1).toInt()*2;
+                       }
+                       else
+                       {
+                           hourspractictry += query2.value(1).toInt();
+                       }
+                       break;
+                   case 3:
+                       hourshalf += query2.value(1).toInt();
+                       if (query2.value(2).toBool())
+                       {
+                           hourspractictry += query2.value(1).toInt()*2;
+                       }
+                       else
+                       {
+                           hourspractictry += query2.value(1).toInt();
+                       }
+                       break;
+                   case 4:
+                       hourscontrol += query2.value(1).toInt();
+                       break;
+                   case 5:
+                       hourszachet += query2.value(1).toInt();
+                       break;
+                   case 6:
+                       hoursexam += query2.value(1).toInt();
+                       break;
+                   }
+               }
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 5);
+               cell->setProperty("Value", QVariant(hourslection));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 6);
+               cell->setProperty("Value", QVariant(hourspractic));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 7);
+               cell->setProperty("Value", QVariant(hourshalf));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 8);
+               cell->setProperty("Value", QVariant(hourshalf+hourspractic+hourslection));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 9);
+               cell->setProperty("Value", QVariant(hourslectiontry));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 10);
+               cell->setProperty("Value", QVariant(hourspractictry));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 11);
+               cell->setProperty("Value", QVariant(hourscontrol));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 12);
+               cell->setProperty("Value", QVariant(hourszachet));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 13);
+               cell->setProperty("Value", QVariant(hoursexam));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 14);
+               cell->setProperty("Value", QVariant(hourslectiontry+hourspractictry));
+               delete cell;
+
+               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 15);
+               cell->setProperty("Value", QVariant(hourslectiontry+hourspractictry+hourshalf+hourspractic+hourslection+hourscontrol+hourszachet+hoursexam));
+               delete cell;
+               row++;
+               }
+           }*/
+       }
+
+       // workbook->dynamicCall("Save()");
+       QDateTime currTime = QDateTime::currentDateTime();
+       workbook->dynamicCall("SaveAs (const QString&)", QString("g:\\")+currTime.toString("dd.MM.yyyy_hh.mm.ss")+QString(".xls"));
+       workbook->dynamicCall("Close()");
+       excel->dynamicCall("Quit()");
+
 }
