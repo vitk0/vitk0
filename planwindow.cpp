@@ -133,44 +133,11 @@ void PlanWindow::on_deleteButton_clicked()
 
 void PlanWindow::on_reportButton_clicked()
 {
-    QSqlQuery query;
-
-       QAxObject* excel = new QAxObject( "Excel.Application", 0 );
-       QAxObject* workbooks = excel->querySubObject( "Workbooks" );
-
-     //  excel->setProperty("Visible", true);
-
-      // workbooks->dynamicCall("Add");
-
-       workbooks->dynamicCall("Open (const QString&)",QString("G:\\QtProjects\\build-ReportMaker-Desktop_Qt_5_6_0_MSVC2015_64bit-Debug\\debug\\1.xls"));
-
-       QAxObject * workbook = excel->querySubObject("ActiveWorkBook");
-       QAxObject* sheets = workbook->querySubObject( "Worksheets" );
-
-       int count = 1;// count = sheets->property("Count").toInt();
-
-       for (int i=1; i<=count; i++) //cycle through sheets
-        {
-
-           //sheet pointer
-
-           QAxObject* sheet = sheets->querySubObject( "Item( int )", i );
-
-           QAxObject* cell = sheet->querySubObject("Cells(QVariant,QVariant)", 1, 1);
+    db->GenerateReport();
 
            /*
-
-
-           con();
-           query.prepare("SELECT id_professors, name FROM professors");
-           query.exec();
-           db.close();
-           int columnCount = 1;//columns->property("Count").toInt();
            for (int row=2; query.next(); row++)
            {
-               cell = sheet->querySubObject("Cells(QVariant,QVariant)", row, 1);
-               cell->setProperty("Value", QVariant(query.value(1).toString()));
-               delete cell;
 
                QSqlQuery query1;
                con();
@@ -325,13 +292,9 @@ void PlanWindow::on_reportButton_clicked()
                delete cell;
                row++;
                }
-           }*/
-       }
+           }
+       }*/
 
        // workbook->dynamicCall("Save()");
-       QDateTime currTime = QDateTime::currentDateTime();
-       workbook->dynamicCall("SaveAs (const QString&)", QString("g:\\")+currTime.toString("dd.MM.yyyy_hh.mm.ss")+QString(".xls"));
-       workbook->dynamicCall("Close()");
-       excel->dynamicCall("Quit()");
 
 }

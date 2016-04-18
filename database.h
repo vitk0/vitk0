@@ -29,6 +29,8 @@ public:
     void GetDisciplines(int vkUvc, int vus, int semester);
     void GetPlatoons(int vkUvc, int vus, int semester, Discipline* discipline);
     void GetThematicPlan(int vkUvc, int vus, int semester, Discipline* discipline);
+
+    void GenerateReport();
 };
 
 #endif // DATABASE_H
