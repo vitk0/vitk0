@@ -20,44 +20,52 @@ void Professor::setName(const QString &value)
     name = value;
 }
 
-int Professor::getIdExtraDuty() const
+QVector<ExtraDuty *> Professor::getExtraDuties() const
 {
-    return idExtraDuty;
+    return extraDuties;
 }
 
-void Professor::setIdExtraDuty(int value)
+void Professor::update(Professor *updated)
 {
-    idExtraDuty = value;
+
+    this->name = updated->getName();
+
+    connect();
+
+    query.prepare("UPDATE professors SET name = (?)\
+                   WHERE id_professors = (?)");
+    query.addBindValue(name);
+    query.addBindValue(id);
+    query.exec();
+
+    close();
 }
 
-QString Professor::getDutyName() const
+void Professor::insert(Professor *inserted)
 {
-    return dutyName;
+
+    connect();
+
+    query.prepare("INSERT professors SET name = (?)");
+    query.addBindValue(inserted->getName());
+    query.exec();
+
+    close();
 }
 
-void Professor::setDutyName(const QString &value)
+void Professor::remove()
 {
-    dutyName = value;
-}
 
-int Professor::getDutyHours() const
-{
-    return dutyHours;
-}
+    connect();
 
-void Professor::setDutyHours(int value)
-{
-    dutyHours = value;
-}
+    query.prepare("DELETE FROM professors WHERE id_professors=(?)");
+    query.addBindValue(id);
+    query.exec();
 
-QString Professor::getPositionName() const
-{
-    return positionName;
-}
+    close();
 
-void Professor::setPositionName(const QString &value)
-{
-    positionName = value;
+    delete this;
+
 }
 
 Professor::Professor()
@@ -65,13 +73,19 @@ Professor::Professor()
     
 }
 
-Professor::Professor(int id, QString name, int idExtraDuty, QString dutyName, int dutyHours, QString positionName)
+Professor::Professor(int id, QString name)
 {
     this->id = id;
     this->name = name;
-    this->idExtraDuty = idExtraDuty;
-    this->dutyName = dutyName;
-    this->dutyHours = dutyHours;
-    this->positionName = positionName;
-
+    connect();
+    query.prepare("SELECT DISTINCT id_extra_duty, duty_name, hours, position_name, id_professors\
+                   FROM extra_duty WHERE id_professors=(?)");
+    query.addBindValue(id);
+    query.exec();
+    while (query.next())
+    {
+        extraDuties.push_back(new ExtraDuty(query.value(0).toInt(), query.value(1).toString(),
+                                    query.value(2).toInt(), query.value(3).toString(), query.value(4).toInt()));
+    }
+    close();
 }

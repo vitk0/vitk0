@@ -40,6 +40,8 @@ private slots:
 
     void on_reportButton_clicked();
 
+    void on_openChangeWindowButton_clicked();
+
 private:
     Ui::PlanWindow *ui;
 

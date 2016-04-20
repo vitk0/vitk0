@@ -20,15 +20,12 @@ DataBase::DataBase()
 
     connect();
 
-    query.prepare("(SELECT * FROM professors JOIN extra_duty ON professors.id_extra_duty = extra_duty.id_extra_duty)\
-                    UNION\
-                    (SELECT id_professors, name, NULL, NULL, NULL, NULL, NULL FROM professors WHERE id_extra_duty IS NULL)");
+    query.prepare("SELECT * FROM professors");
     query.exec();
 
     while (query.next())
     {
-        professors.push_back(new Professor(query.value(0).toInt(), query.value(1).toString(), query.value(2).toInt(), query.value(4).toString(),
-                                           query.value(5).toInt(), query.value(6).toString() ));
+        professors.push_back(new Professor(query.value(0).toInt(), query.value(1).toString()));
     }
 
     close();
@@ -156,7 +153,13 @@ void DataBase::GenerateReport()
                cell = sheet->querySubObject("Cells(QVariant,QVariant)", currentRow, 1);
                cell->setProperty("Value", QString::number(i+1));
                cell = sheet->querySubObject("Cells(QVariant,QVariant)", currentRow, 2);
-               cell->setProperty("Value", professors[i]->getDutyName()+QString("\n\n")+professors[i]->getName());
+               QString temp;
+               foreach (ExtraDuty* i, professors[i]->getExtraDuties())
+               {
+                   temp+= i->getDutyName();
+               }
+
+               cell->setProperty("Value", temp+QString("\n\n")+professors[i]->getName());
 
                int resultlection = 0;
                int resultpractic = 0;
@@ -173,11 +176,11 @@ void DataBase::GenerateReport()
                connect();
 
                query.prepare("SELECT DISTINCT thematic_plan.vk_uvc, thematic_plan.vus, disciplines.name\
-                             FROM classes_professors JOIN classes ON classes_professors.id_classes=classes.id_classes\
-                                JOIN thematic_plan ON classes.id_thematic_plan = thematic_plan.id_thematic_plan\
-                                JOIN professors ON classes_professors.id_professors = professors.id_professors\
-                                JOIN disciplines ON thematic_plan.id_disciplines=disciplines.id_disciplines \
-                                WHERE professors.id_professors = (?) ORDER BY thematic_plan.vus");
+                              FROM classes_professors JOIN classes ON classes_professors.id_classes=classes.id_classes\
+                              JOIN thematic_plan ON classes.id_thematic_plan = thematic_plan.id_thematic_plan\
+                              JOIN professors ON classes_professors.id_professors = professors.id_professors\
+                              JOIN disciplines ON thematic_plan.id_disciplines=disciplines.id_disciplines \
+                              WHERE professors.id_professors = (?) ORDER BY thematic_plan.vus");
                        query.addBindValue(professors[i]->getId());
                query.exec();
                close();
@@ -388,7 +391,7 @@ void DataBase::GenerateReport()
                }
                connect();
                query.prepare("SELECT extra_duty.position_name, extra_duty.hours FROM professors\
-                                JOIN extra_duty ON professors.id_extra_duty = extra_duty.id_extra_duty\
+                                JOIN extra_duty ON professors.id_professors = extra_duty.id_professors\
                                 WHERE professors.id_professors = (?)");
                        query.addBindValue(professors[i]->getId());
                        query.exec();

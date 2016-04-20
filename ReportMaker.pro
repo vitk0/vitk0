@@ -23,7 +23,9 @@ main.cpp\
     class.cpp \
     classtype.cpp \
     classeditwindow.cpp \
-    professor.cpp
+    professor.cpp \
+    windowchange.cpp \
+    extraduty.cpp
 
 HEADERS  +=     connect.h \
 planwindow.h \
@@ -35,7 +37,10 @@ planwindow.h \
     class.h \
     classtype.h \
     classeditwindow.h \
-    professor.h
+    professor.h \
+    windowchange.h \
+    extraduty.h
 
 FORMS    += planwindow.ui \
-    classeditwindow.ui
+    classeditwindow.ui \
+    windowchange.ui

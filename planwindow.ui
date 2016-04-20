@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>841</width>
-    <height>680</height>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,6 +99,9 @@
       <height>481</height>
      </rect>
     </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
     <attribute name="verticalHeaderVisible">
      <bool>false</bool>
     </attribute>
@@ -163,6 +166,19 @@
       <width>51</width>
       <height>21</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="openChangeWindowButton">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>600</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Изменить таблицы</string>
     </property>
    </widget>
   </widget>
