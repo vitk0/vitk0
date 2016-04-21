@@ -10,31 +10,33 @@ DataBase::DataBase()
 
 void DataBase::GetVuses(int vkUvc)
 {
-    currentVuses.clear();
+    currentPlatoons.clear();
 
     connect();
 
-    query.prepare("SELECT DISTINCT vus FROM thematic_plan WHERE vk_uvc=(?)");
+    query.prepare("SELECT DISTINCT platoons.id_platoons, platoons.year, platoons.count_man, platoons.number_of_stream,\
+                   platoons.count_half_platoons, platoons.vus FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons WHERE vk_uvc=(?)");
     query.addBindValue(vkUvc);
     query.exec();
 
     while (query.next())
     {
-        currentVuses.push_back(query.value(0).toInt());
+        currentPlatoons.push_back(new Platoon(query.value(0).toInt(),query.value(1).toInt(),query.value(2).toInt(),query.value(3).toInt(),query.value(4).toInt(),query.value(5).toInt()));
     }
 
     close();
 }
 
-void DataBase::GetSemesters(int vkUvc, int vus)
+void DataBase::GetSemesters(int vkUvc, Platoon* platoon)
 {
     currentSemesters.clear();
 
     connect();
 
-    query.prepare("SELECT DISTINCT semester FROM thematic_plan WHERE vk_uvc=(?) AND vus=(?)");
+    query.prepare("SELECT DISTINCT semester FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
+                  WHERE vk_uvc=(?) AND platoons.vus=(?)");
     query.addBindValue(vkUvc);
-    query.addBindValue(vus);
+    query.addBindValue(platoon->getVus());
     query.exec();
 
     while (query.next())
@@ -46,7 +48,7 @@ void DataBase::GetSemesters(int vkUvc, int vus)
 
 }
 
-void DataBase::GetDisciplines(int vkUvc, int vus, int semester)
+void DataBase::GetDisciplines(int vkUvc, Platoon *platoon, int semester)
 {
     foreach (Discipline* i, currentDisciplines) {
         delete i;
@@ -57,9 +59,10 @@ void DataBase::GetDisciplines(int vkUvc, int vus, int semester)
 
     query.prepare("SELECT DISTINCT disciplines.id_disciplines, disciplines.name FROM thematic_plan \
                    JOIN disciplines ON disciplines.id_disciplines = thematic_plan.id_disciplines \
-                   WHERE vk_uvc=(?) AND vus=(?) AND semester=(?)");
+                   JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
+                   WHERE vk_uvc=(?) AND platoons.vus=(?) AND semester=(?)");
     query.addBindValue(vkUvc);
-    query.addBindValue(vus);
+    query.addBindValue(platoon->getVus());
     query.addBindValue(semester);
     query.exec();
 
@@ -77,7 +80,7 @@ void DataBase::GetPlatoons(int vkUvc, int vus, int semester, Discipline *discipl
 
 }
 
-void DataBase::GetThematicPlan(int vkUvc, int vus, int semester, Discipline *discipline)
+void DataBase::GetThematicPlan(int vkUvc, Platoon *platoon, int semester, Discipline *discipline)
 {
     if (currentThematicPlan!= nullptr)
         delete currentThematicPlan;
@@ -85,15 +88,16 @@ void DataBase::GetThematicPlan(int vkUvc, int vus, int semester, Discipline *dis
     connect();
 
     query.prepare("SELECT DISTINCT id_thematic_plan FROM thematic_plan \
-                   WHERE vk_uvc=(?) AND vus=(?) AND semester=(?) AND id_disciplines=(?)");
+                   JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
+                   WHERE vk_uvc=(?) AND platoons.vus=(?) AND semester=(?) AND id_disciplines=(?)");
     query.addBindValue(vkUvc);
-    query.addBindValue(vus);
+    query.addBindValue(platoon->getVus());
     query.addBindValue(semester);
     query.addBindValue(discipline->getId());
     query.exec();
 
     query.next();
-    currentThematicPlan = new ThematicPlan(query.value(0).toInt(), vkUvc, vus, semester, discipline);
+    currentThematicPlan = new ThematicPlan(query.value(0).toInt(), vkUvc, discipline, semester, platoon);
     close();
 }
 
@@ -133,7 +137,7 @@ void DataBase::GenerateReport()
                QString temp;
                foreach (ExtraDuty* i, professors[i]->getExtraDuties())
                {
-                   temp+= i->getDutyName();
+                   temp+= i->getDutyName()+QString(" ");
                }
 
                cell->setProperty("Value", temp+QString("\n\n")+professors[i]->getName());
@@ -152,12 +156,13 @@ void DataBase::GenerateReport()
 
                connect();
 
-               query.prepare("SELECT DISTINCT thematic_plan.vk_uvc, thematic_plan.vus, disciplines.name\
+               query.prepare("SELECT DISTINCT thematic_plan.vk_uvc, platoons.vus, disciplines.name\
                               FROM classes_professors JOIN classes ON classes_professors.id_classes=classes.id_classes\
                               JOIN thematic_plan ON classes.id_thematic_plan = thematic_plan.id_thematic_plan\
+                              JOIN platoons ON platoons.id_platoons = thematic_plan.id_platoons\
                               JOIN professors ON classes_professors.id_professors = professors.id_professors\
                               JOIN disciplines ON thematic_plan.id_disciplines=disciplines.id_disciplines \
-                              WHERE professors.id_professors = (?) ORDER BY thematic_plan.vus");
+                              WHERE professors.id_professors = (?) ORDER BY platoons.vus");
                        query.addBindValue(professors[i]->getId());
                query.exec();
                close();
@@ -175,7 +180,7 @@ void DataBase::GenerateReport()
                                      JOIN professors ON classes_professors.id_professors = professors.id_professors\
                                      JOIN disciplines ON thematic_plan.id_disciplines=disciplines.id_disciplines \
                                      WHERE professors.id_professors = (?) AND thematic_plan.vk_uvc = (?)\
-                                     AND thematic_plan.vus = (?) AND disciplines.name = (?)");
+                                     AND platoons.vus = (?) AND disciplines.name = (?)");
                    queryTemp.addBindValue(professors[i]->getId());
                    queryTemp.addBindValue(query.value(0).toInt());
                    queryTemp.addBindValue(query.value(1).toInt());
@@ -206,7 +211,7 @@ void DataBase::GenerateReport()
                                          JOIN professors ON classes_professors.id_professors = professors.id_professors\
                                          JOIN disciplines ON thematic_plan.id_disciplines=disciplines.id_disciplines \
                                          WHERE professors.id_professors = (?) AND thematic_plan.vk_uvc = (?)\
-                                         AND thematic_plan.vus = (?) AND disciplines.name = (?)");
+                                         AND platoons.vus = (?) AND disciplines.name = (?)");
                        queryTemp2.addBindValue(professors[i]->getId());
                        queryTemp2.addBindValue(query.value(0).toInt());
                        queryTemp2.addBindValue(query.value(1).toInt());

@@ -20,16 +20,6 @@ void ThematicPlan::setVkUvc(int value)
     vkUvc = value;
 }
 
-int ThematicPlan::getVus() const
-{
-    return vus;
-}
-
-void ThematicPlan::setVus(int value)
-{
-    vus = value;
-}
-
 Discipline *ThematicPlan::getDiscipline() const
 {
     return discipline;
@@ -55,14 +45,15 @@ ThematicPlan::~ThematicPlan()
     delete discipline;
 }
 
-ThematicPlan::ThematicPlan(int id, int vkUvc, int vus, int semester,
-                           Discipline *discipline)
+ThematicPlan::ThematicPlan(int id, int vkUvc,
+                           Discipline *discipline, int semester, Platoon *platoon)
 {
     this->id = id;
     this->vkUvc = vkUvc;
-    this->vus = vus;
-    this->semester = semester;
+    this->platoon = new Platoon(platoon->getId(), platoon->getYear(), platoon->getManCount(), platoon->getStreamNumber(),
+                              platoon->getHalfPlatoonsCount(), platoon->getVus());
     this->discipline = new Discipline(discipline->getId(), discipline->getName());
+    this->semester = semester;
 
     connect();
 

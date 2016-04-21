@@ -6,24 +6,23 @@
 #include "discipline.h"
 #include "class.h"
 #include "connect.h"
+#include "platoon.h"
 
 class ThematicPlan: public Connect
 {
     int id;
     int vkUvc;
-    int vus;
     Discipline* discipline;
     int semester;
+    Platoon* platoon;
     QVector<Class*> classes;
 public:
     ThematicPlan();
-    ThematicPlan(int id, int vkUvc, int vus, int semester, Discipline* discipline);
+    ThematicPlan(int id, int vkUvc, Discipline* discipline, int semester, Platoon* platoon);
     int getId() const;
     void setId(int value);
     int getVkUvc() const;
     void setVkUvc(int value);
-    int getVus() const;
-    void setVus(int value);
     Discipline *getDiscipline() const;
     void setDiscipline(Discipline *value);
     int getSemester() const;

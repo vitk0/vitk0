@@ -30,9 +30,9 @@ void PlanWindow::on_VkUvcComboBox_currentIndexChanged(int index)
 {
     db->GetVuses(index+1);
     ui->VUSComboBox->clear();
-    foreach (int i, db->currentVuses)
+    foreach (Platoon* i, db->currentPlatoons)
     {
-        ui->VUSComboBox->addItem(QString::number(i));
+        ui->VUSComboBox->addItem(QString::number(i->getVus()));
     }
 }
 
@@ -41,7 +41,7 @@ void PlanWindow::on_VUSComboBox_currentIndexChanged(int index)
     ui->semesterComboBox->clear();
     if (index!= -1)
     {
-        db->GetSemesters(ui->VkUvcComboBox->currentIndex()+1, db->currentVuses[index]);
+        db->GetSemesters(ui->VkUvcComboBox->currentIndex()+1, db->currentPlatoons[index]);
         foreach (int i, db->currentSemesters)
         {
             ui->semesterComboBox->addItem(QString::number(i));
@@ -54,7 +54,7 @@ void PlanWindow::on_semesterComboBox_currentIndexChanged(int index)
     ui->disciplineComboBox->clear();
     if (index!=-1)
     {
-        db->GetDisciplines(ui->VkUvcComboBox->currentIndex()+1, db->currentVuses[ui->VUSComboBox->currentIndex()],
+        db->GetDisciplines(ui->VkUvcComboBox->currentIndex()+1, db->currentPlatoons[ui->VUSComboBox->currentIndex()],
                 db->currentSemesters[index]);
         foreach (Discipline* i, db->currentDisciplines)
         {
@@ -65,7 +65,7 @@ void PlanWindow::on_semesterComboBox_currentIndexChanged(int index)
 
 void PlanWindow::Fill()
 {
-    db->GetThematicPlan(ui->VkUvcComboBox->currentIndex()+1, db->currentVuses[ui->VUSComboBox->currentIndex()],
+    db->GetThematicPlan(ui->VkUvcComboBox->currentIndex()+1, db->currentPlatoons[ui->VUSComboBox->currentIndex()],
             db->currentSemesters[ui->semesterComboBox->currentIndex()], db->currentDisciplines[ui->disciplineComboBox->currentIndex()] );
 
     //для редоктирования имен колонок попробовать так  take a look at QTableWidget::setHorizontalHeaderLabels and QTableWidget::setHorizontalHeaderItem (in this case you can use QTableWidgetItem::setText) или так ui.tableWidgetTextureLibrary->setTorizontalHeaderItem(0, new QTableWidgetItem("Whatever")); ui.tableWidgetTextureLibrary->horizontalHeaderItem(0)->setText("Whatever");
