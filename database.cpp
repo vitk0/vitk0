@@ -5,30 +5,7 @@
 DataBase::DataBase()
 {
     currentThematicPlan = nullptr;
-
-    connect();
-
-    query.prepare("SELECT * FROM class_type");
-    query.exec();
-
-    while (query.next())
-    {
-        classTypes.push_back(new ClassType(query.value(0).toInt(), query.value(1).toString()));
-    }
-
-    close();
-
-    connect();
-
-    query.prepare("SELECT * FROM professors");
-    query.exec();
-
-    while (query.next())
-    {
-        professors.push_back(new Professor(query.value(0).toInt(), query.value(1).toString()));
-    }
-
-    close();
+    reload();
 }
 
 void DataBase::GetVuses(int vkUvc)
@@ -445,5 +422,62 @@ void DataBase::GenerateReport()
            workbook->dynamicCall("Close()");
            excel->dynamicCall("Quit()");
 
+       }
 }
+
+void DataBase::reload()
+{
+    connect();
+
+    query.prepare("SELECT * FROM class_type");
+    query.exec();
+
+    classTypes.clear();
+    while (query.next())
+    {
+        classTypes.push_back(new ClassType(query.value(0).toInt(), query.value(1).toString()));
+    }
+
+    close();
+
+    connect();
+
+    query.prepare("SELECT * FROM professors");
+    query.exec();
+
+    professors.clear();
+    while (query.next())
+    {
+        professors.push_back(new Professor(query.value(0).toInt(), query.value(1).toString()));
+    }
+
+    close();
+
+    connect();
+
+    query.prepare("SELECT * FROM extra_duty");
+    query.exec();
+
+    extraDuties.clear();
+    while (query.next())
+    {
+        extraDuties.push_back(new ExtraDuty(query.value(0).toInt(), query.value(1).toString(), query.value(2).toInt(),
+                                            query.value(3).toString(), query.value(4).toInt()));
+    }
+
+    close();
+
+    connect();
+
+    query.prepare("SELECT * FROM disciplines");
+    query.exec();
+
+    disciplines.clear();
+    while (query.next())
+    {
+        disciplines.push_back(new Discipline(query.value(0).toInt(), query.value(1).toString()));
+    }
+
+    close();
+
 }

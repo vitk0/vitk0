@@ -24,6 +24,8 @@ private slots:
 
 private:
     Ui::WindowChange *ui;
+
+    void Fill(int index);
 };
 
 #endif // WINDOWCHANGE_H

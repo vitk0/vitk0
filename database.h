@@ -23,6 +23,8 @@ public:
 
     QVector<ClassType*> classTypes;
     QVector<Professor*> professors;
+    QVector<ExtraDuty*> extraDuties;
+    QVector<Discipline*> disciplines;
 
     void GetVuses(int vkUvc);
     void GetSemesters(int vkUvc, int vus);
@@ -31,6 +33,8 @@ public:
     void GetThematicPlan(int vkUvc, int vus, int semester, Discipline* discipline);
 
     void GenerateReport();
+
+    void reload();
 };
 
 #endif // DATABASE_H
