@@ -1,8 +1,11 @@
 #ifndef PLATOON_H
 #define PLATOON_H
 
+#include "connect.h"
 
-class Platoon
+
+
+class Platoon: public Connect
 {
     int id;
     int year;
@@ -25,6 +28,10 @@ public:
     void setHalfPlatoonsCount(int value);
     int getVus() const;
     void setVus(int value);
+
+    void update(Platoon* updated);
+    void insert(Platoon* inserted);
+    void remove();
 };
 
 #endif // PLATOON_H

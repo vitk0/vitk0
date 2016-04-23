@@ -60,6 +60,112 @@ void Platoon::setVus(int value)
     vus = value;
 }
 
+void Platoon::update(Platoon *updated)
+{
+    this->year = updated->getYear();
+    this->manCount = updated->getManCount();
+    this->streamNumber = updated->getStreamNumber();
+    this->halfPlatoonsCount = updated->getHalfPlatoonsCount();
+    this->vus = updated->getVus();
+
+    connect();
+
+    query.prepare("UPDATE platoons SET year = (?), count_man = (?), number_of_stream = (?), count_half_platoons = (?),\
+                   vus = (?) WHERE id_platoons = (?)");
+    query.addBindValue(year);
+    query.addBindValue(manCount);
+    query.addBindValue(streamNumber);
+    query.addBindValue(halfPlatoonsCount);
+    query.addBindValue(vus);
+    query.addBindValue(id);
+    query.exec();
+
+    close();
+
+}
+
+void Platoon::insert(Platoon *inserted)
+{
+    connect();
+
+    query.prepare("INSERT platoons SET year = (?), count_man = (?), number_of_stream = (?), count_half_platoons = (?),\
+                   vus = (?)");
+    query.addBindValue(year);
+    query.addBindValue(manCount);
+    query.addBindValue(streamNumber);
+    query.addBindValue(halfPlatoonsCount);
+    query.addBindValue(vus);
+    query.exec();
+    query.prepare("SELECT last_insert_id()");
+    query.exec();
+    query.next();
+
+    int selected = query.value(0).toInt();
+
+    close();
+    connect();
+
+    query.prepare("SELECT id_disciplines FROM disciplines");
+    query.exec();
+
+    close();
+
+    QSqlQuery queryTemp;
+    while (query.next())
+    {
+        connect();
+
+        queryTemp.prepare("INSERT thematic_plan SET vk_uvc = 1, id_disciplines = (?), id_platoons = (?), semester = 1");
+        queryTemp.addBindValue(query.value(0).toInt());
+        queryTemp.addBindValue(selected);
+        queryTemp.exec();
+
+        close();
+
+        connect();
+
+        queryTemp.prepare("INSERT thematic_plan SET vk_uvc = 2, id_disciplines = (?), id_platoons = (?), semester = 1");
+        queryTemp.addBindValue(query.value(0).toInt());
+        queryTemp.addBindValue(selected);
+        queryTemp.exec();
+
+        close();
+
+        connect();
+
+        queryTemp.prepare("INSERT thematic_plan SET vk_uvc = 1, id_disciplines = (?), id_platoons = (?), semester = 2");
+        queryTemp.addBindValue(query.value(0).toInt());
+        queryTemp.addBindValue(selected);
+        queryTemp.exec();
+
+        close();
+
+        connect();
+
+        queryTemp.prepare("INSERT thematic_plan SET vk_uvc = 2, id_disciplines = (?), id_platoons = (?), semester = 2");
+        queryTemp.addBindValue(query.value(0).toInt());
+        queryTemp.addBindValue(selected);
+        queryTemp.exec();
+
+        close();
+    }
+
+}
+
+void Platoon::remove()
+{
+    connect();
+
+    query.prepare("DELETE FROM platoons WHERE id_platoons=(?)");
+    query.addBindValue(id);
+    query.exec();
+
+    close();
+
+    delete this;
+
+}
+
 Platoon::Platoon()
 {
 

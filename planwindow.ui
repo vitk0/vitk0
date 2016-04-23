@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>841</width>
+    <width>863</width>
     <height>632</height>
    </rect>
   </property>
@@ -81,6 +81,9 @@
     </property>
    </widget>
    <widget class="QComboBox" name="platoonComboBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>670</x>
@@ -95,7 +98,7 @@
      <rect>
       <x>20</x>
       <y>80</y>
-      <width>801</width>
+      <width>821</width>
       <height>481</height>
      </rect>
     </property>
@@ -120,6 +123,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="leftButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -133,9 +139,12 @@
     </property>
    </widget>
    <widget class="QPushButton" name="rightButton_2">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>180</x>
       <y>570</y>
       <width>31</width>
       <height>23</height>
@@ -146,6 +155,9 @@
     </property>
    </widget>
    <widget class="QLabel" name="pageCountLabel">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -155,10 +167,13 @@
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>Номер стр</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="currentPageEdit">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -174,7 +189,7 @@
       <x>580</x>
       <y>600</y>
       <width>111</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <property name="text">

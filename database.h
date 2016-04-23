@@ -24,6 +24,7 @@ public:
     QVector<Professor*> professors;
     QVector<ExtraDuty*> extraDuties;
     QVector<Discipline*> disciplines;
+    QVector<Platoon*> platoons;
 
     void GetVuses(int vkUvc);
     void GetSemesters(int vkUvc, Platoon *platoon);

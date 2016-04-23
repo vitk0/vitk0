@@ -113,7 +113,7 @@ void DataBase::GenerateReport()
 
       // workbooks->dynamicCall("Add");
 
-       workbooks->dynamicCall("Open (const QString&)",QString("G:\\QtProjects\\build-ReportMaker-Desktop_Qt_5_6_0_MSVC2015_64bit-Debug\\debug\\1.xls"));
+       workbooks->dynamicCall("Open (const QString&)",QDir::currentPath().replace("/","\\")+QString("\\1.xls"));
 
        QAxObject * workbook = excel->querySubObject("ActiveWorkBook");
        QAxObject* sheets = workbook->querySubObject( "Worksheets" );
@@ -423,7 +423,7 @@ void DataBase::GenerateReport()
            }
 
            QDateTime currTime = QDateTime::currentDateTime();
-           workbook->dynamicCall("SaveAs (const QString&)", QString("g:\\")+currTime.toString("dd.MM.yyyy_hh.mm.ss")+QString(".xls"));
+           workbook->dynamicCall("SaveAs (const QString&)", QDir::currentPath().replace("/","\\")+currTime.toString("dd.MM.yyyy_hh.mm.ss")+QString(".xls"));
            workbook->dynamicCall("Close()");
            excel->dynamicCall("Quit()");
 
@@ -485,4 +485,17 @@ void DataBase::reload()
 
     close();
 
+    connect();
+
+    query.prepare("SELECT * FROM platoons");
+    query.exec();
+
+    platoons.clear();
+    while (query.next())
+    {
+        platoons.push_back(new Platoon(query.value(0).toInt(), query.value(1).toInt(), query.value(2).toInt(), query.value(3).toInt(),
+                                       query.value(4).toInt(), query.value(5).toInt()));
+    }
+
+    close();
 }

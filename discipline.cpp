@@ -42,9 +42,60 @@ void Discipline::insert(Discipline *inserted)
     query.prepare("INSERT disciplines SET name = (?)");
     query.addBindValue(inserted->getName());
     query.exec();
+    query.prepare("SELECT last_insert_id()");
+    query.exec();
+    query.next();
+
+    int selected = query.value(0).toInt();
 
     close();
 
+    connect();
+
+    query.prepare("SELECT id_platoons FROM platoons");
+    query.exec();
+
+    close();
+
+    QSqlQuery queryTemp;
+    while (query.next())
+    {
+        connect();
+
+        queryTemp.prepare("INSERT thematic_plan SET vk_uvc = 1, id_disciplines = (?), id_platoons = (?), semester = 1");
+        queryTemp.addBindValue(selected);
+        queryTemp.addBindValue(query.value(0).toInt());
+        queryTemp.exec();
+
+        close();
+
+        connect();
+
+        queryTemp.prepare("INSERT thematic_plan SET vk_uvc = 2, id_disciplines = (?), id_platoons = (?), semester = 1");
+        queryTemp.addBindValue(selected);
+        queryTemp.addBindValue(query.value(0).toInt());
+        queryTemp.exec();
+
+        close();
+
+        connect();
+
+        queryTemp.prepare("INSERT thematic_plan SET vk_uvc = 1, id_disciplines = (?), id_platoons = (?), semester = 2");
+        queryTemp.addBindValue(selected);
+        queryTemp.addBindValue(query.value(0).toInt());
+        queryTemp.exec();
+
+        close();
+
+        connect();
+
+        queryTemp.prepare("INSERT thematic_plan SET vk_uvc = 2, id_disciplines = (?), id_platoons = (?), semester = 2");
+        queryTemp.addBindValue(selected);
+        queryTemp.addBindValue(query.value(0).toInt());
+        queryTemp.exec();
+
+        close();
+    }
 }
 
 void Discipline::remove()

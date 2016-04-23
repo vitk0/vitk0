@@ -73,6 +73,25 @@ void PlanWindow::Fill()
     ui->tableWidget->clear();
     ui->tableWidget->setColumnCount(9);
     ui->tableWidget->setRowCount(db->currentThematicPlan->classesCount());
+    ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(QString("№")));
+    ui->tableWidget->setColumnWidth(0,30);
+    ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(QString("Тип занятия")));
+    ui->tableWidget->setColumnWidth(1,140);
+    ui->tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(QString("Длительность")));
+    ui->tableWidget->setColumnWidth(2,85);
+    ui->tableWidget->setHorizontalHeaderItem(3, new QTableWidgetItem(QString("")));
+    ui->tableWidget->setColumnWidth(3,20);
+    ui->tableWidget->setHorizontalHeaderItem(4, new QTableWidgetItem(QString("ФИО преподавателя")));
+    ui->tableWidget->setColumnWidth(4,165);
+    ui->tableWidget->setHorizontalHeaderItem(5, new QTableWidgetItem(QString("")));
+    ui->tableWidget->setColumnWidth(5,20);
+    ui->tableWidget->setHorizontalHeaderItem(6, new QTableWidgetItem(QString("ФИО преподавателя")));
+    ui->tableWidget->setColumnWidth(6,165);
+    ui->tableWidget->setHorizontalHeaderItem(7, new QTableWidgetItem(QString("")));
+    ui->tableWidget->setColumnWidth(7,20);
+    ui->tableWidget->setHorizontalHeaderItem(8, new QTableWidgetItem(QString("ФИО преподавателя")));
+    ui->tableWidget->setColumnWidth(8,165);
+
     const QVector<Class*> classes = db->currentThematicPlan->getClasses();
     for (int i=0;i < db->currentThematicPlan->classesCount();i++)
     {
