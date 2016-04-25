@@ -1,4 +1,4 @@
-#include "planwindow.h"
+#include "gui\planwindow.h"
 #include <QApplication>
 
 

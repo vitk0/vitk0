@@ -1,7 +1,7 @@
 #ifndef PLANWINDOW_H
 #define PLANWINDOW_H
 
-#include "database.h"
+#include "database\database.h"
 
 #include <QAxObject>
 #include <QMainWindow>
