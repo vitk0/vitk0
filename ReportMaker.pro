@@ -12,35 +12,35 @@ TARGET = ReportMaker
 TEMPLATE = app
 
 
-SOURCES +=     connect.cpp\
-main.cpp\
-        planwindow.cpp \
-    database.cpp \
-    discipline.cpp \
-    thematicplan.cpp \
-    platoon.cpp \
-    classes_professors.cpp \
-    class.cpp \
-    classtype.cpp \
-    classeditwindow.cpp \
-    professor.cpp \
-    windowchange.cpp \
-    extraduty.cpp
+SOURCES += main.cpp\
+    database/class.cpp \
+    database/classes_professors.cpp \
+    database/classtype.cpp \
+    database/connect.cpp \
+    database/database.cpp \
+    database/discipline.cpp \
+    database/extraduty.cpp \
+    database/platoon.cpp \
+    database/professor.cpp \
+    database/thematicplan.cpp \
+    gui/classeditwindow.cpp \
+    gui/planwindow.cpp \
+    gui/windowchange.cpp
 
-HEADERS  +=     connect.h \
-planwindow.h \
-    database.h \
-    discipline.h \
-    thematicplan.h \
-    platoon.h \
-    classes_professors.h \
-    class.h \
-    classtype.h \
-    classeditwindow.h \
-    professor.h \
-    windowchange.h \
-    extraduty.h
+HEADERS  += database/class.h \
+    database/classes_professors.h \
+    database/classtype.h \
+    database/connect.h \
+    database/database.h \
+    database/discipline.h \
+    database/extraduty.h \
+    database/platoon.h \
+    database/professor.h \
+    database/thematicplan.h \
+    gui/classeditwindow.h \
+    gui/planwindow.h \
+    gui/windowchange.h
 
-FORMS    += planwindow.ui \
-    classeditwindow.ui \
-    windowchange.ui
+FORMS    += gui/classeditwindow.ui \
+    gui/planwindow.ui \
+    gui/windowchange.ui
