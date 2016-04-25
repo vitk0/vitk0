@@ -37,12 +37,6 @@ CREATE TABLE IF NOT EXISTS `extra_duty` (
   CONSTRAINT `id_professors` FOREIGN KEY (`id_professors`) REFERENCES `professors` (`id_professors`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `class_type` (
-  `id_class_type` int(11) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  PRIMARY KEY (`id_class_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE IF NOT EXISTS `disciplines` (
   `id_disciplines` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
