@@ -6,6 +6,8 @@
 #include "classeditwindow.h"
 #include "windowchange.h"
 
+
+
 PlanWindow::PlanWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::PlanWindow)

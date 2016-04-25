@@ -10,7 +10,8 @@ Connect::Connect()
 
 void Connect::connect()
 {
-    db.setHostName("127.0.0.1");
+    db.setHostName("localhost");
+    db.setPort(3306);
     db.setDatabaseName("db2");
     db.setUserName("root");
     db.setPassword("toor");
