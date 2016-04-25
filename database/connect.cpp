@@ -2,7 +2,6 @@
 
 
 QSqlDatabase Connect::db = QSqlDatabase::addDatabase("QMYSQL");
-//QSqlQuery Connect::query;
 
 Connect::Connect()
 {
@@ -14,7 +13,7 @@ void Connect::connect()
     db.setPort(3306);
     db.setDatabaseName("db2");
     db.setUserName("root");
-    db.setPassword("toor");
+    db.setPassword("qwerty");
     db.open();
 }
 
@@ -22,3 +21,6 @@ void Connect::close()
 {
     db.close();
 }
+
+//template<typename... T>
+//void Connect::Query(QString queryString, const T & ... args)

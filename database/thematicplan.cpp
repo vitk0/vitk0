@@ -55,21 +55,16 @@ ThematicPlan::ThematicPlan(int id, int vkUvc,
     this->discipline = new Discipline(discipline->getId(), discipline->getName());
     this->semester = semester;
 
-    connect();
-
-    query.prepare("SELECT DISTINCT id_classes, number, class_type.id_class_type,\
+    Query("SELECT DISTINCT id_classes, number, class_type.id_class_type,\
                    class_type.name, hours FROM classes JOIN class_type\
                    ON class_type.id_class_type = classes.id_type \
-                   WHERE id_thematic_plan=(?) ORDER BY number");
-    query.addBindValue(id);
-    query.exec();
+                   WHERE id_thematic_plan=(?) ORDER BY number", id);
     while (query.next())
     {
         classes.push_back(new Class(query.value(0).toInt(), query.value(1).toInt(),
                                     new ClassType(query.value(2).toInt(), query.value(3).toString()),
                                     query.value(4).toInt(), id));
     }
-    close();
 }
 
 QVector<Class *> ThematicPlan::getClasses() const

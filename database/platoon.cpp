@@ -68,41 +68,20 @@ void Platoon::update(Platoon *updated)
     this->halfPlatoonsCount = updated->getHalfPlatoonsCount();
     this->vus = updated->getVus();
 
-    connect();
-
-    query.prepare("UPDATE platoons SET year = (?), count_man = (?), number_of_stream = (?), count_half_platoons = (?),\
-                   vus = (?) WHERE id_platoons = (?)");
-    query.addBindValue(year);
-    query.addBindValue(manCount);
-    query.addBindValue(streamNumber);
-    query.addBindValue(halfPlatoonsCount);
-    query.addBindValue(vus);
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("UPDATE platoons SET year = (?), count_man = (?), number_of_stream = (?), count_half_platoons = (?),\
+                   vus = (?) WHERE id_platoons = (?)",
+            year, manCount, streamNumber, halfPlatoonsCount, vus, id);
 
 }
 
 void Platoon::insert(Platoon *inserted)
 {
-    connect();
+    Query("INSERT platoons SET year = (?), count_man = (?), number_of_stream = (?), count_half_platoons = (?),\
+                   vus = (?)",
+            year, manCount, streamNumber, halfPlatoonsCount, vus);
 
-    query.prepare("INSERT platoons SET year = (?), count_man = (?), number_of_stream = (?), count_half_platoons = (?),\
-                   vus = (?)");
-    query.addBindValue(year);
-    query.addBindValue(manCount);
-    query.addBindValue(streamNumber);
-    query.addBindValue(halfPlatoonsCount);
-    query.addBindValue(vus);
-    query.exec();
-    query.prepare("SELECT last_insert_id()");
-    query.exec();
-    query.next();
+    int selected = query.lastInsertId().toInt();
 
-    int selected = query.value(0).toInt();
-
-    close();
     connect();
 
     query.prepare("SELECT id_disciplines FROM disciplines");
@@ -154,13 +133,7 @@ void Platoon::insert(Platoon *inserted)
 
 void Platoon::remove()
 {
-    connect();
-
-    query.prepare("DELETE FROM platoons WHERE id_platoons=(?)");
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("DELETE FROM platoons WHERE id_platoons=(?)", id);
 
     delete this;
 

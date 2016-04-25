@@ -47,43 +47,20 @@ void ExtraDuty::update(ExtraDuty *updated)
     this->positionName = updated->getPositionName();
     this->idProfessor = updated->getIdProfessor();
 
-    connect();
-
-    query.prepare("UPDATE extra_duty SET duty_name = (?), hours = (?), position_name = (?), id_professors = (?)\
-                   WHERE id_extra_duty = (?)");
-    query.addBindValue(dutyName);
-    query.addBindValue(dutyHours);
-    query.addBindValue(positionName);
-    query.addBindValue(idProfessor);
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("UPDATE extra_duty SET duty_name = (?), hours = (?), position_name = (?), id_professors = (?)\
+                   WHERE id_extra_duty = (?)", dutyName, dutyHours, positionName,
+            idProfessor, id);
 }
 
 void ExtraDuty::insert(ExtraDuty *inserted)
 {
-    connect();
-
-    query.prepare("INSERT extra_duty SET duty_name = (?), hours = (?), position_name = (?), id_professors = (?)");
-    query.addBindValue(inserted->getDutyName());
-    query.addBindValue(inserted->getDutyHours());
-    query.addBindValue(inserted->getPositionName());
-    query.addBindValue(inserted->getIdProfessor());
-    query.exec();
-
-    close();
+    Query("INSERT extra_duty SET duty_name = (?), hours = (?), position_name = (?), id_professors = (?)",
+          inserted->getDutyName(), inserted->getDutyHours(), inserted->getPositionName(), inserted->getIdProfessor());
 }
 
 void ExtraDuty::remove()
 {
-    connect();
-
-    query.prepare("DELETE FROM extra_duty WHERE id_extra_duty=(?)");
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("DELETE FROM extra_duty WHERE id_extra_duty=(?)", id);
 
     delete this;
 

@@ -57,41 +57,20 @@ void classes_professors::update(classes_professors *updated)
     this->idProfessor = updated->getIdProfessor();
     this->name = updated->getName();
 
-    connect();
-
-    query.prepare("UPDATE classes_professors SET first_classes = (?), id_professors = (?) WHERE id_classes_professors=(?)");
-    query.addBindValue(firstTime);
-    query.addBindValue(idProfessor);
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("UPDATE classes_professors SET first_classes = (?), id_professors = (?) WHERE id_classes_professors=(?)",
+          firstTime, idProfessor, id);
 
 }
 
 void classes_professors::insert(classes_professors *inserted)
 {
-    connect();
-
-    query.prepare("INSERT classes_professors SET id_classes = (?), first_classes = (?), id_professors = (?)");
-    query.addBindValue(inserted->getIdClass());
-    query.addBindValue((int)inserted->getFirstTime());
-    query.addBindValue(inserted->getIdProfessor());
-    query.exec();
-
-    close();
-
+    Query("INSERT classes_professors SET id_classes = (?), first_classes = (?), id_professors = (?)",
+          inserted->getIdClass(), (int)inserted->getFirstTime(), inserted->getIdProfessor());
 }
 
 void classes_professors::remove()
 {
-    connect();
-
-    query.prepare("DELETE FROM classes_professors WHERE id_classes_professors=(?)");
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("DELETE FROM classes_professors WHERE id_classes_professors=(?)", id);
 
     delete this;
 }

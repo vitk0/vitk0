@@ -62,16 +62,8 @@ void Class::update(Class *updated)
     this->classType = updated->getClassType();
     this->hours = updated->getHours();
 
-    connect();
-
-    query.prepare("UPDATE classes SET number = (?), id_type = (?), hours = (?) WHERE id_classes=(?)");
-    query.addBindValue(number);
-    query.addBindValue(classType->getId());
-    query.addBindValue(hours);
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("UPDATE classes SET number = (?), id_type = (?), hours = (?) WHERE id_classes=(?)",
+          number, classType->getId(), hours, id);
 
     foreach(classes_professors* i, professors)
     {
@@ -87,20 +79,9 @@ void Class::update(Class *updated)
 
 void Class::insert(Class *inserted)
 {
-    connect();
-
-    query.prepare("INSERT classes SET number = (?), id_type = (?), hours = (?), id_thematic_plan = (?)");
-    query.addBindValue(inserted->getNumber());
-    query.addBindValue(inserted->getClassType()->getId());
-    query.addBindValue(inserted->getHours());
-    query.addBindValue(inserted->getIdThematicPlan());
-    query.exec();
-
-    query.prepare("SELECT last_insert_id()");
-    query.exec();
-    close();
-    query.next();
-    inserted->setId(query.value(0).toInt());
+    Query("INSERT classes SET number = (?), id_type = (?), hours = (?), id_thematic_plan = (?)",
+          inserted->getNumber(), inserted->getClassType()->getId(), inserted->getHours(), inserted->getIdThematicPlan());
+    inserted->setId(query.lastInsertId().toInt());
 
     foreach(classes_professors* i, inserted->getProfessors())
     {
@@ -117,13 +98,7 @@ void Class::remove()
         i->remove();
     }
 
-    connect();
-
-    query.prepare("DELETE FROM classes WHERE id_classes=(?)");
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("DELETE FROM classes WHERE id_classes=(?)", id);
 
     delete this;
 }
@@ -156,17 +131,13 @@ Class::Class(int id, int number, ClassType* classType, int hours, int idThematic
     this->hours = hours;
     this->idThematicPlan = idThematicPlan;
 
-    connect();
-    query.prepare("SELECT DISTINCT id_classes_professors, first_classes, professors.id_professors,\
+    Query("SELECT DISTINCT id_classes_professors, first_classes, professors.id_professors,\
                    professors.name FROM classes_professors JOIN professors\
                    ON classes_professors.id_professors = professors.id_professors \
-                   WHERE id_classes=(?)");
-    query.addBindValue(id);
-    query.exec();
+                   WHERE id_classes=(?)", id);
     while (query.next())
     {
         professors.push_back(new classes_professors(query.value(0).toInt(), id, query.value(1).toBool(),
                                     query.value(2).toInt(), query.value(3).toString()));
     }
-    close();
 }

@@ -24,38 +24,17 @@ void Discipline::update(Discipline *updated)
 {
     this->name = updated->getName();
 
-    connect();
-
-    query.prepare("UPDATE disciplines SET name = (?)\
-                   WHERE id_disciplines = (?)");
-    query.addBindValue(name);
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("UPDATE disciplines SET name = (?)\
+                   WHERE id_disciplines = (?)", name, id);
 }
 
 void Discipline::insert(Discipline *inserted)
 {
-    connect();
+    Query("INSERT disciplines SET name = (?)", inserted->getName());
 
-    query.prepare("INSERT disciplines SET name = (?)");
-    query.addBindValue(inserted->getName());
-    query.exec();
-    query.prepare("SELECT last_insert_id()");
-    query.exec();
-    query.next();
+    int selected = query.lastInsertId().toInt();
 
-    int selected = query.value(0).toInt();
-
-    close();
-
-    connect();
-
-    query.prepare("SELECT id_platoons FROM platoons");
-    query.exec();
-
-    close();
+    Query("SELECT id_platoons FROM platoons");
 
     QSqlQuery queryTemp;
     while (query.next())
@@ -100,16 +79,9 @@ void Discipline::insert(Discipline *inserted)
 
 void Discipline::remove()
 {
-    connect();
-
-    query.prepare("DELETE FROM disciplines WHERE id_disciplines=(?)");
-    query.addBindValue(id);
-    query.exec();
-
-    close();
+    Query("DELETE FROM disciplines WHERE id_disciplines=(?)", id);
 
     delete this;
-
 }
 
 Discipline::Discipline(int id, QString name)

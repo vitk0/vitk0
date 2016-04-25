@@ -12,39 +12,27 @@ void DataBase::GetVuses(int vkUvc)
 {
     currentPlatoons.clear();
 
-    connect();
-
-    query.prepare("SELECT DISTINCT platoons.id_platoons, platoons.year, platoons.count_man, platoons.number_of_stream,\
-                   platoons.count_half_platoons, platoons.vus FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons WHERE vk_uvc=(?)");
-    query.addBindValue(vkUvc);
-    query.exec();
+    Query("SELECT DISTINCT platoons.id_platoons, platoons.year, platoons.count_man, platoons.number_of_stream,\
+                         platoons.count_half_platoons, platoons.vus FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons WHERE vk_uvc=(?)",
+          vkUvc);
 
     while (query.next())
     {
         currentPlatoons.push_back(new Platoon(query.value(0).toInt(),query.value(1).toInt(),query.value(2).toInt(),query.value(3).toInt(),query.value(4).toInt(),query.value(5).toInt()));
     }
-
-    close();
 }
 
 void DataBase::GetSemesters(int vkUvc, Platoon* platoon)
 {
     currentSemesters.clear();
 
-    connect();
-
-    query.prepare("SELECT DISTINCT semester FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
-                  WHERE vk_uvc=(?) AND platoons.vus=(?)");
-    query.addBindValue(vkUvc);
-    query.addBindValue(platoon->getVus());
-    query.exec();
-
+    Query("SELECT DISTINCT semester FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
+                        WHERE vk_uvc=(?) AND platoons.vus=(?)",
+            vkUvc, platoon->getVus());
     while (query.next())
     {
         currentSemesters.push_back(query.value(0).toInt());
     }
-
-    close();
 
 }
 
@@ -55,23 +43,16 @@ void DataBase::GetDisciplines(int vkUvc, Platoon *platoon, int semester)
     }
     currentDisciplines.clear();
 
-    connect();
-
-    query.prepare("SELECT DISTINCT disciplines.id_disciplines, disciplines.name FROM thematic_plan \
+    Query("SELECT DISTINCT disciplines.id_disciplines, disciplines.name FROM thematic_plan \
                    JOIN disciplines ON disciplines.id_disciplines = thematic_plan.id_disciplines \
                    JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
-                   WHERE vk_uvc=(?) AND platoons.vus=(?) AND semester=(?)");
-    query.addBindValue(vkUvc);
-    query.addBindValue(platoon->getVus());
-    query.addBindValue(semester);
-    query.exec();
+                   WHERE vk_uvc=(?) AND platoons.vus=(?) AND semester=(?)",
+            vkUvc, platoon->getVus(), semester);
 
     while (query.next())
     {
         currentDisciplines.push_back(new Discipline(query.value(0).toInt(), query.value(1).toString()));
     }
-
-    close();
 
 }
 
@@ -85,20 +66,13 @@ void DataBase::GetThematicPlan(int vkUvc, Platoon *platoon, int semester, Discip
     if (currentThematicPlan!= nullptr)
         delete currentThematicPlan;
 
-    connect();
-
-    query.prepare("SELECT DISTINCT id_thematic_plan FROM thematic_plan \
+    Query("SELECT DISTINCT id_thematic_plan FROM thematic_plan \
                    JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
-                   WHERE vk_uvc=(?) AND platoons.vus=(?) AND semester=(?) AND id_disciplines=(?)");
-    query.addBindValue(vkUvc);
-    query.addBindValue(platoon->getVus());
-    query.addBindValue(semester);
-    query.addBindValue(discipline->getId());
-    query.exec();
+                   WHERE vk_uvc=(?) AND platoons.vus=(?) AND semester=(?) AND id_disciplines=(?)",
+            vkUvc, platoon->getVus(), semester, discipline->getId());
 
     query.next();
     currentThematicPlan = new ThematicPlan(query.value(0).toInt(), vkUvc, discipline, semester, platoon);
-    close();
 }
 
 void DataBase::GenerateReport()
@@ -109,16 +83,12 @@ void DataBase::GenerateReport()
        int headerHeight = 7;
        int currentRow = headerHeight;
 
-     //  excel->setProperty("Visible", true);
-
-      // workbooks->dynamicCall("Add");
-
        workbooks->dynamicCall("Open (const QString&)",QDir::currentPath().replace("/","\\")+QString("\\1.xls"));
 
        QAxObject * workbook = excel->querySubObject("ActiveWorkBook");
        QAxObject* sheets = workbook->querySubObject( "Worksheets" );
 
-       int count = 1;// count = sheets->property("Count").toInt();
+       int count = 1;
 
        for (int i=1; i<=count; i++) //cycle through sheets
         {
@@ -432,10 +402,7 @@ void DataBase::GenerateReport()
 
 void DataBase::reload()
 {
-    connect();
-
-    query.prepare("SELECT * FROM class_type");
-    query.exec();
+    Query("SELECT * FROM class_type");
 
     classTypes.clear();
     while (query.next())
@@ -443,12 +410,7 @@ void DataBase::reload()
         classTypes.push_back(new ClassType(query.value(0).toInt(), query.value(1).toString()));
     }
 
-    close();
-
-    connect();
-
-    query.prepare("SELECT * FROM professors");
-    query.exec();
+    Query("SELECT * FROM professors");
 
     professors.clear();
     while (query.next())
@@ -456,12 +418,7 @@ void DataBase::reload()
         professors.push_back(new Professor(query.value(0).toInt(), query.value(1).toString()));
     }
 
-    close();
-
-    connect();
-
-    query.prepare("SELECT * FROM extra_duty");
-    query.exec();
+    Query("SELECT * FROM extra_duty");
 
     extraDuties.clear();
     while (query.next())
@@ -470,12 +427,7 @@ void DataBase::reload()
                                             query.value(3).toString(), query.value(4).toInt()));
     }
 
-    close();
-
-    connect();
-
-    query.prepare("SELECT * FROM disciplines");
-    query.exec();
+    Query("SELECT * FROM disciplines");
 
     disciplines.clear();
     while (query.next())
@@ -483,12 +435,7 @@ void DataBase::reload()
         disciplines.push_back(new Discipline(query.value(0).toInt(), query.value(1).toString()));
     }
 
-    close();
-
-    connect();
-
-    query.prepare("SELECT * FROM platoons");
-    query.exec();
+    Query("SELECT * FROM platoons");
 
     platoons.clear();
     while (query.next())
@@ -496,6 +443,4 @@ void DataBase::reload()
         platoons.push_back(new Platoon(query.value(0).toInt(), query.value(1).toInt(), query.value(2).toInt(), query.value(3).toInt(),
                                        query.value(4).toInt(), query.value(5).toInt()));
     }
-
-    close();
 }
