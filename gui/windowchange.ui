@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>509</width>
-    <height>589</height>
+    <width>558</width>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Доп. таблицы</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTableWidget" name="tableWidget">
@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>491</width>
+      <width>541</width>
       <height>491</height>
      </rect>
     </property>
@@ -53,6 +53,11 @@
       <string>Взвода</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>Учебные сборы</string>
+     </property>
+    </item>
    </widget>
    <widget class="QPushButton" name="deleteButton">
     <property name="geometry">
@@ -73,7 +78,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>509</width>
+     <width>558</width>
      <height>21</height>
     </rect>
    </property>

@@ -87,6 +87,22 @@ void WindowChange::on_tableWidget_cellChanged(int row, int column)
             db->platoons[row]->update(temp);
         }
         break;
+    case 4:
+        if (ui->tableWidget->currentRow()>=db->trainingSessions.size())
+        {
+            TrainingSession* temp = new TrainingSession(0,ui->tableWidget->item(row,0)->text().toInt(), ui->tableWidget->item(row, 1)->text().toInt(),
+                                            ui->tableWidget->item(row,2)->text().toInt(), ui->tableWidget->item(row, 3)->text().toInt());
+            temp->insert(temp);
+            db->reload();
+            Fill(ui->comboBox->currentIndex());
+        }
+        else if (ui->tableWidget->currentRow()>=0)
+        {
+            TrainingSession* temp = new TrainingSession(0,ui->tableWidget->item(row,0)->text().toInt(), ui->tableWidget->item(row, 1)->text().toInt(),
+                                        ui->tableWidget->item(row,2)->text().toInt(), ui->tableWidget->item(row, 3)->text().toInt());
+            db->trainingSessions[row]->update(temp);
+        }
+        break;
     }
 
 }
@@ -125,8 +141,10 @@ void WindowChange::Fill(int index)
         ui->tableWidget->setRowCount(db->extraDuties.size()+1);
         ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(QString("Должность")));
         ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(QString("Часовая нагрузка")));
+        ui->tableWidget->setColumnWidth(1,130);
         ui->tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(QString("Название")));
-        ui->tableWidget->setHorizontalHeaderItem(3, new QTableWidgetItem(QString("ID")));
+        ui->tableWidget->setHorizontalHeaderItem(3, new QTableWidgetItem(QString("ID преподавателя")));
+        ui->tableWidget->setColumnWidth(3,130);
         foreach (ExtraDuty* i, db->extraDuties)
         {
             ui->tableWidget->setVerticalHeaderItem(j, new QTableWidgetItem(QString::number(i->getId())));
@@ -168,13 +186,34 @@ void WindowChange::Fill(int index)
         ui->tableWidget->setItem(j, 2, new QTableWidgetItem(QString::number(0)));
         ui->tableWidget->setItem(j, 4, new QTableWidgetItem(QString::number(0)));
         break;
+    case 4:
+        ui->tableWidget->setColumnCount(4);
+        ui->tableWidget->setRowCount(db->platoons.size()+1);
+        ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(QString("ID преподавателя")));
+        ui->tableWidget->setColumnWidth(0,120);
+        ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(QString("Руководство сборами")));
+        ui->tableWidget->setColumnWidth(1,130);
+        ui->tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(QString("Итоговая аттестация")));
+        ui->tableWidget->setColumnWidth(2,130);
+        ui->tableWidget->setHorizontalHeaderItem(3, new QTableWidgetItem(QString("Руководство с.р.")));
+        ui->tableWidget->setColumnWidth(3,110);
+
+        foreach (TrainingSession* i, db->trainingSessions)
+        {
+            ui->tableWidget->setVerticalHeaderItem(j, new QTableWidgetItem(QString::number(i->getId())));
+            ui->tableWidget->setItem(j, 0, new QTableWidgetItem(QString::number(i->getIdProfessor())));
+            ui->tableWidget->setItem(j, 1, new QTableWidgetItem(QString::number(i->getTrainingManagement())));
+            ui->tableWidget->setItem(j, 2, new QTableWidgetItem(QString::number(i->getFinalExamenation())));
+            ui->tableWidget->setItem(j, 3, new QTableWidgetItem(QString::number(i->getSelfStudyManagement())));
+            j++;
+        }
+        ui->tableWidget->setItem(j, 1, new QTableWidgetItem(QString::number(0)));
+        ui->tableWidget->setItem(j, 0, new QTableWidgetItem(QString::number(0)));
+        ui->tableWidget->setItem(j, 3, new QTableWidgetItem(QString::number(0)));
+        ui->tableWidget->setItem(j, 2, new QTableWidgetItem(QString::number(0)));
+        break;
     }
     ui->tableWidget->setVerticalHeaderItem(j, new QTableWidgetItem(QString("*")));
-    //for (int i=0; i<ui->tableWidget->rowCount(); i++)
-    //{
-    //    for (int j = 0; j < ui->tableWidget->colorCount();j++)
-    //    ui->tableWidget->item(i, j)->setTextAlignment(Qt::AlignCenter);
-    //}
 }
 
 void WindowChange::on_deleteButton_clicked()
@@ -204,6 +243,12 @@ void WindowChange::on_deleteButton_clicked()
         if (ui->tableWidget->currentRow()<db->platoons.size() && ui->tableWidget->currentRow()>=0)
         {
             db->platoons[ui->tableWidget->currentRow()]->remove();
+        }
+        break;
+    case 4:
+        if (ui->tableWidget->currentRow()<db->trainingSessions.size() && ui->tableWidget->currentRow()>=0)
+        {
+            db->trainingSessions[ui->tableWidget->currentRow()]->remove();
         }
         break;
     }

@@ -25,7 +25,9 @@ SOURCES += main.cpp\
     database/thematicplan.cpp \
     gui/classeditwindow.cpp \
     gui/planwindow.cpp \
-    gui/windowchange.cpp
+    gui/windowchange.cpp \
+    database/trainingsession.cpp \
+    gui/connectionsettings.cpp
 
 HEADERS  += database/class.h \
     database/classes_professors.h \
@@ -39,8 +41,11 @@ HEADERS  += database/class.h \
     database/thematicplan.h \
     gui/classeditwindow.h \
     gui/planwindow.h \
-    gui/windowchange.h
+    gui/windowchange.h \
+    database/trainingsession.h \
+    gui/connectionsettings.h
 
 FORMS    += gui/classeditwindow.ui \
     gui/planwindow.ui \
-    gui/windowchange.ui
+    gui/windowchange.ui \
+    gui/connectionsettings.ui

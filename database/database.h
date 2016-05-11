@@ -8,6 +8,7 @@
 #include "platoon.h"
 #include "professor.h"
 #include "thematicplan.h"
+#include "trainingsession.h"
 
 class DataBase: public Connect
 {
@@ -25,6 +26,7 @@ public:
     QVector<ExtraDuty*> extraDuties;
     QVector<Discipline*> disciplines;
     QVector<Platoon*> platoons;
+    QVector<TrainingSession*> trainingSessions;
 
     void GetVuses(int vkUvc);
     void GetSemesters(int vkUvc, Platoon *platoon);

@@ -42,6 +42,8 @@ private slots:
 
     void on_openChangeWindowButton_clicked();
 
+    void on_toolButton_clicked();
+
 private:
     Ui::PlanWindow *ui;
 

@@ -5,13 +5,37 @@
 
 #include "classeditwindow.h"
 #include "windowchange.h"
-
-
+#include "connectionsettings.h"
+#include <QFile>
 
 PlanWindow::PlanWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::PlanWindow)
 {
+//    QFile file("Settings.txt");
+//    if(!file.exists()){
+//        QByteArray data;
+//        data.insert(0,Connect::dbName + QString("\n") + Connect::dbIP + QString("\n") + Connect::dbPort + QString("\n") + Connect::dbLogin + QString("\n") + Connect::dbPassword);
+
+//        file.open(QIODevice::WriteOnly);
+//        file.write(data);
+//        file.close();
+//    }
+    QFile file("Settings.txt");
+    if(file.open(QIODevice::ReadOnly|QIODevice::Text)){
+        while (!file.atEnd()) {
+           QString str = file.readLine();
+           QStringList lst = str.split(" ");
+           Connect::dbName = lst.at(0);
+           Connect::dbIP = lst.at(1);
+           Connect::dbPort = lst.at(2).toInt();
+           Connect::dbLogin = lst.at(3);
+           Connect::dbPassword = lst.at(4);
+           file.close();
+        }
+    }
+
+
     ui->setupUi(this);
     db = new DataBase();
     ui->VkUvcComboBox->addItem(QString("ВК"));
@@ -26,6 +50,22 @@ Ui::PlanWindow *PlanWindow::GetUI()
 PlanWindow::~PlanWindow()
 {
     delete ui;
+
+    QFile file("Settings.txt");
+    if(file.open(QIODevice::WriteOnly|QIODevice::Text)){
+        while (!file.atEnd()) {
+           QString str = Connect::dbName + QString(" ") +
+                 Connect::dbIP + QString(" ") +
+                 Connect::dbPort + QString(" ") +
+                 Connect::dbLogin + QString(" ") +
+                 Connect::dbPassword ;
+
+                 QByteArray data;
+                 data.insert(0,str);
+                 file.write(data);
+                 file.close();
+        }
+    }
 }
 
 void PlanWindow::on_VkUvcComboBox_currentIndexChanged(int index)
@@ -70,29 +110,27 @@ void PlanWindow::Fill()
     db->GetThematicPlan(ui->VkUvcComboBox->currentIndex()+1, db->currentPlatoons[ui->VUSComboBox->currentIndex()],
             db->currentSemesters[ui->semesterComboBox->currentIndex()], db->currentDisciplines[ui->disciplineComboBox->currentIndex()] );
 
-    //для редоктирования имен колонок попробовать так  take a look at QTableWidget::setHorizontalHeaderLabels and QTableWidget::setHorizontalHeaderItem (in this case you can use QTableWidgetItem::setText) или так ui.tableWidgetTextureLibrary->setTorizontalHeaderItem(0, new QTableWidgetItem("Whatever")); ui.tableWidgetTextureLibrary->horizontalHeaderItem(0)->setText("Whatever");
-
     ui->tableWidget->clear();
     ui->tableWidget->setColumnCount(9);
     ui->tableWidget->setRowCount(db->currentThematicPlan->classesCount());
     ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(QString("№")));
-    ui->tableWidget->setColumnWidth(0,30);
-    ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(QString("Тип занятия")));
+    ui->tableWidget->setColumnWidth(0,25);
+    ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(QString("Вид занятия")));
     ui->tableWidget->setColumnWidth(1,140);
     ui->tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(QString("Длительность")));
     ui->tableWidget->setColumnWidth(2,85);
-    ui->tableWidget->setHorizontalHeaderItem(3, new QTableWidgetItem(QString("")));
-    ui->tableWidget->setColumnWidth(3,20);
+    ui->tableWidget->setHorizontalHeaderItem(3, new QTableWidgetItem(QString("П.р.")));
+    ui->tableWidget->setColumnWidth(3,30);
     ui->tableWidget->setHorizontalHeaderItem(4, new QTableWidgetItem(QString("ФИО преподавателя")));
-    ui->tableWidget->setColumnWidth(4,165);
-    ui->tableWidget->setHorizontalHeaderItem(5, new QTableWidgetItem(QString("")));
-    ui->tableWidget->setColumnWidth(5,20);
+    ui->tableWidget->setColumnWidth(4,160);
+    ui->tableWidget->setHorizontalHeaderItem(5, new QTableWidgetItem(QString("П.р.")));
+    ui->tableWidget->setColumnWidth(5,30);
     ui->tableWidget->setHorizontalHeaderItem(6, new QTableWidgetItem(QString("ФИО преподавателя")));
-    ui->tableWidget->setColumnWidth(6,165);
-    ui->tableWidget->setHorizontalHeaderItem(7, new QTableWidgetItem(QString("")));
-    ui->tableWidget->setColumnWidth(7,20);
+    ui->tableWidget->setColumnWidth(6,160);
+    ui->tableWidget->setHorizontalHeaderItem(7, new QTableWidgetItem(QString("П.р.")));
+    ui->tableWidget->setColumnWidth(7,30);
     ui->tableWidget->setHorizontalHeaderItem(8, new QTableWidgetItem(QString("ФИО преподавателя")));
-    ui->tableWidget->setColumnWidth(8,165);
+    ui->tableWidget->setColumnWidth(8,150);
 
     const QVector<Class*> classes = db->currentThematicPlan->getClasses();
     for (int i=0;i < db->currentThematicPlan->classesCount();i++)
@@ -166,4 +204,11 @@ void PlanWindow::on_openChangeWindowButton_clicked()
 {
     WindowChange* admin = new WindowChange(this);
     admin->show();
+}
+
+
+void PlanWindow::on_toolButton_clicked()
+{
+    ConnectionSettings* conSettings = new ConnectionSettings(this);
+    conSettings->show();
 }

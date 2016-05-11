@@ -78,7 +78,7 @@ void Platoon::insert(Platoon *inserted)
 {
     Query("INSERT platoons SET year = (?), count_man = (?), number_of_stream = (?), count_half_platoons = (?),\
                    vus = (?)",
-            year, manCount, streamNumber, halfPlatoonsCount, vus);
+            inserted->getYear(), inserted->getManCount(), inserted->getStreamNumber(), inserted->getHalfPlatoonsCount(), inserted->getVus());
 
     int selected = query.lastInsertId().toInt();
 
