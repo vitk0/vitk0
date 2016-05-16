@@ -21,6 +21,8 @@ public:
     DataBase* db;
     bool update;
 
+    void Fill();
+
     ~PlanWindow();
 
 private slots:
@@ -47,7 +49,6 @@ private slots:
 private:
     Ui::PlanWindow *ui;
 
-    void Fill();
 };
 
 #endif // PLANWINDOW_H

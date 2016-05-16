@@ -254,7 +254,7 @@
     </widget>
     <widget class="QComboBox" name="platoonComboBox">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

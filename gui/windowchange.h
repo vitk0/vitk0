@@ -1,14 +1,14 @@
 #ifndef WINDOWCHANGE_H
 #define WINDOWCHANGE_H
 
-#include <QMainWindow>
+#include <QDialog>
 
 
 namespace Ui {
 class WindowChange;
 }
 
-class WindowChange : public QMainWindow
+class WindowChange : public QDialog
 {
     Q_OBJECT
 

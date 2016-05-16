@@ -4,7 +4,7 @@
 #include "planwindow.h"
 
 WindowChange::WindowChange(QWidget *parent) :
-    QMainWindow(parent),
+    QDialog(parent),
     ui(new Ui::WindowChange)
 {
     ui->setupUi(this);

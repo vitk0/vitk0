@@ -203,7 +203,11 @@ void PlanWindow::on_reportButton_clicked()
 void PlanWindow::on_openChangeWindowButton_clicked()
 {
     WindowChange* admin = new WindowChange(this);
-    admin->show();
+    if(admin->exec()+1)
+    {
+        ui->VkUvcComboBox->setCurrentIndex(-1);
+        ui->VkUvcComboBox->setCurrentIndex(0);
+    }
 }
 
 

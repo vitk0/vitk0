@@ -264,6 +264,19 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>numberClassEdit</tabstop>
+  <tabstop>typeClassesComboBox</tabstop>
+  <tabstop>hoursEdit</tabstop>
+  <tabstop>professorComboBox</tabstop>
+  <tabstop>firstClassCheckBox</tabstop>
+  <tabstop>professorComboBox_2</tabstop>
+  <tabstop>firstClassCheckBox_2</tabstop>
+  <tabstop>professorComboBox_3</tabstop>
+  <tabstop>firstClassCheckBox_3</tabstop>
+  <tabstop>addProfessorButton</tabstop>
+  <tabstop>deleteProfessorButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

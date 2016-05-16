@@ -63,6 +63,7 @@ ClassEditWindow::ClassEditWindow(QWidget *parent) :
             frames[i]->show();
         }
     }
+    ui->numberClassEdit->setFocus();
 }
 
 ClassEditWindow::~ClassEditWindow()
