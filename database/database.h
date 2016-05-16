@@ -16,6 +16,7 @@ public:
     DataBase();
 
     QVector<int> currentSemesters;
+    QVector<int> currentVuses;
     QVector<Discipline*> currentDisciplines;
     QVector<Platoon*> currentPlatoons;
 
@@ -29,9 +30,9 @@ public:
     QVector<TrainingSession*> trainingSessions;
 
     void GetVuses(int vkUvc);
+    void GetPlatoons(int vkUvc, int vus);
     void GetSemesters(int vkUvc, Platoon *platoon);
     void GetDisciplines(int vkUvc, Platoon *platoon, int semester);
-    void GetPlatoons(int vkUvc, int vus, int semester, Discipline* discipline);
     void GetThematicPlan(int vkUvc, Platoon *platoon, int semester, Discipline* discipline);
 
     void GenerateReport();

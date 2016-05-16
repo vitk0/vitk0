@@ -46,6 +46,8 @@ private slots:
 
     void on_toolButton_clicked();
 
+    void on_platoonComboBox_currentIndexChanged(int index);
+
 private:
     Ui::PlanWindow *ui;
 

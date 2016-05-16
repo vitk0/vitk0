@@ -72,13 +72,26 @@ void PlanWindow::on_VkUvcComboBox_currentIndexChanged(int index)
 {
     db->GetVuses(index+1);
     ui->VUSComboBox->clear();
-    foreach (Platoon* i, db->currentPlatoons)
+    foreach (int i, db->currentVuses)
     {
-        ui->VUSComboBox->addItem(QString::number(i->getVus()));
+        ui->VUSComboBox->addItem(QString::number(i));
     }
 }
 
 void PlanWindow::on_VUSComboBox_currentIndexChanged(int index)
+{
+    ui->platoonComboBox->clear();
+    if (index!=-1)
+    {
+        db->GetPlatoons(ui->VkUvcComboBox->currentIndex()+1, db->currentVuses[ui->VUSComboBox->currentIndex()]);
+        foreach (Platoon* i, db->currentPlatoons)
+        {
+            ui->platoonComboBox->addItem(QString::number(i->getId()));
+        }
+    }
+}
+
+void PlanWindow::on_platoonComboBox_currentIndexChanged(int index)
 {
     ui->semesterComboBox->clear();
     if (index!= -1)
@@ -96,7 +109,7 @@ void PlanWindow::on_semesterComboBox_currentIndexChanged(int index)
     ui->disciplineComboBox->clear();
     if (index!=-1)
     {
-        db->GetDisciplines(ui->VkUvcComboBox->currentIndex()+1, db->currentPlatoons[ui->VUSComboBox->currentIndex()],
+        db->GetDisciplines(ui->VkUvcComboBox->currentIndex()+1, db->currentPlatoons[ui->platoonComboBox->currentIndex()],
                 db->currentSemesters[index]);
         foreach (Discipline* i, db->currentDisciplines)
         {
@@ -107,7 +120,7 @@ void PlanWindow::on_semesterComboBox_currentIndexChanged(int index)
 
 void PlanWindow::Fill()
 {
-    db->GetThematicPlan(ui->VkUvcComboBox->currentIndex()+1, db->currentPlatoons[ui->VUSComboBox->currentIndex()],
+    db->GetThematicPlan(ui->VkUvcComboBox->currentIndex()+1, db->currentPlatoons[ui->platoonComboBox->currentIndex()],
             db->currentSemesters[ui->semesterComboBox->currentIndex()], db->currentDisciplines[ui->disciplineComboBox->currentIndex()] );
 
     ui->tableWidget->clear();

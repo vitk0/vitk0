@@ -10,16 +10,30 @@ DataBase::DataBase()
 
 void DataBase::GetVuses(int vkUvc)
 {
+    currentVuses.clear();
+
+    Query("SELECT DISTINCT platoons.vus FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
+                        WHERE vk_uvc=(?)",
+            vkUvc);
+    while (query.next())
+    {
+        currentVuses.push_back(query.value(0).toInt());
+    }
+}
+
+void DataBase::GetPlatoons(int vkUvc, int vus)
+{
     currentPlatoons.clear();
 
     Query("SELECT DISTINCT platoons.id_platoons, platoons.year, platoons.count_man, platoons.number_of_stream,\
-                         platoons.count_half_platoons, platoons.vus FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons WHERE vk_uvc=(?)",
-          vkUvc);
+                         platoons.count_half_platoons FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons WHERE vk_uvc=(?) AND platoons.vus=(?)",
+          vkUvc, vus);
 
     while (query.next())
     {
-        currentPlatoons.push_back(new Platoon(query.value(0).toInt(),query.value(1).toInt(),query.value(2).toInt(),query.value(3).toInt(),query.value(4).toInt(),query.value(5).toInt()));
+        currentPlatoons.push_back(new Platoon(query.value(0).toInt(),query.value(1).toInt(),query.value(2).toInt(),query.value(3).toInt(),query.value(4).toInt(),vus));
     }
+
 }
 
 void DataBase::GetSemesters(int vkUvc, Platoon* platoon)
@@ -27,8 +41,8 @@ void DataBase::GetSemesters(int vkUvc, Platoon* platoon)
     currentSemesters.clear();
 
     Query("SELECT DISTINCT semester FROM thematic_plan JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
-                        WHERE vk_uvc=(?) AND platoons.vus=(?)",
-            vkUvc, platoon->getVus());
+                        WHERE vk_uvc=(?) AND platoons.id_platoons=(?)",
+            vkUvc, platoon->getId());
     while (query.next())
     {
         currentSemesters.push_back(query.value(0).toInt());
@@ -46,18 +60,13 @@ void DataBase::GetDisciplines(int vkUvc, Platoon *platoon, int semester)
     Query("SELECT DISTINCT disciplines.id_disciplines, disciplines.name FROM thematic_plan \
                    JOIN disciplines ON disciplines.id_disciplines = thematic_plan.id_disciplines \
                    JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
-                   WHERE vk_uvc=(?) AND platoons.vus=(?) AND semester=(?)",
-            vkUvc, platoon->getVus(), semester);
+                   WHERE vk_uvc=(?) AND platoons.id_platoons=(?) AND semester=(?)",
+            vkUvc, platoon->getId(), semester);
 
     while (query.next())
     {
         currentDisciplines.push_back(new Discipline(query.value(0).toInt(), query.value(1).toString()));
     }
-
-}
-
-void DataBase::GetPlatoons(int vkUvc, int vus, int semester, Discipline *discipline)
-{
 
 }
 
@@ -68,8 +77,8 @@ void DataBase::GetThematicPlan(int vkUvc, Platoon *platoon, int semester, Discip
 
     Query("SELECT DISTINCT id_thematic_plan FROM thematic_plan \
                    JOIN platoons ON thematic_plan.id_platoons = platoons.id_platoons\
-                   WHERE vk_uvc=(?) AND platoons.vus=(?) AND semester=(?) AND id_disciplines=(?)",
-            vkUvc, platoon->getVus(), semester, discipline->getId());
+                   WHERE vk_uvc=(?) AND platoons.id_platoons=(?) AND semester=(?) AND id_disciplines=(?)",
+            vkUvc, platoon->getId(), semester, discipline->getId());
 
     query.next();
     currentThematicPlan = new ThematicPlan(query.value(0).toInt(), vkUvc, discipline, semester, platoon);
