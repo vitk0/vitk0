@@ -12,15 +12,6 @@ PlanWindow::PlanWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::PlanWindow)
 {
-//    QFile file("Settings.txt");
-//    if(!file.exists()){
-//        QByteArray data;
-//        data.insert(0,Connect::dbName + QString("\n") + Connect::dbIP + QString("\n") + Connect::dbPort + QString("\n") + Connect::dbLogin + QString("\n") + Connect::dbPassword);
-
-//        file.open(QIODevice::WriteOnly);
-//        file.write(data);
-//        file.close();
-//    }
     QFile file("Settings.txt");
     if(file.open(QIODevice::ReadOnly|QIODevice::Text)){
         while (!file.atEnd()) {
@@ -31,8 +22,7 @@ PlanWindow::PlanWindow(QWidget *parent) :
            Connect::dbPort = lst.at(2).toInt();
            Connect::dbLogin = lst.at(3);
            Connect::dbPassword = lst.at(4);
-           file.close();
-        }
+        } file.close();
     }
 
 
@@ -50,22 +40,6 @@ Ui::PlanWindow *PlanWindow::GetUI()
 PlanWindow::~PlanWindow()
 {
     delete ui;
-
-    QFile file("Settings.txt");
-    if(file.open(QIODevice::WriteOnly|QIODevice::Text)){
-        while (!file.atEnd()) {
-           QString str = Connect::dbName + QString(" ") +
-                 Connect::dbIP + QString(" ") +
-                 Connect::dbPort + QString(" ") +
-                 Connect::dbLogin + QString(" ") +
-                 Connect::dbPassword ;
-
-                 QByteArray data;
-                 data.insert(0,str);
-                 file.write(data);
-                 file.close();
-        }
-    }
 }
 
 void PlanWindow::on_VkUvcComboBox_currentIndexChanged(int index)
@@ -228,4 +202,14 @@ void PlanWindow::on_toolButton_clicked()
 {
     ConnectionSettings* conSettings = new ConnectionSettings(this);
     conSettings->show();
+}
+
+void PlanWindow::on_pushButton_clicked()
+{
+    QProcess dumpProcess(this);
+    QStringList args;
+    QDateTime currTime = QDateTime::currentDateTime();
+    args << "-uroot" << "-pmysql" << "dump"+currTime.toString("dd.MM.yyyy_hh");
+    dumpProcess.setStandardOutputFile("dump"+currTime.toString("dd.MM.yyyy_hh")+".sql");
+    dumpProcess.start("mysqldump", args);
 }

@@ -11,15 +11,16 @@ int Connect::dbPort;
 
 Connect::Connect()
 {
+
 }
 
 void Connect::connect()
 {
-    db.setHostName("localhost");
-    db.setPort(3306);
-    db.setDatabaseName("db2");
-    db.setUserName("root");
-    db.setPassword("toor");
+    db.setHostName(dbIP);
+    db.setPort(dbPort);
+    db.setDatabaseName(dbName);
+    db.setUserName(dbLogin);
+    db.setPassword(dbPassword);
     db.open();
 }
 

@@ -163,8 +163,11 @@ void WindowChange::Fill(int index)
         ui->tableWidget->setColumnCount(5);
         ui->tableWidget->setRowCount(db->platoons.size()+1);
         ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(QString("Год поступления")));
+        ui->tableWidget->setColumnWidth(0,130);
         ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(QString("Численность")));
+        ui->tableWidget->setColumnWidth(1,110);
         ui->tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(QString("№ потока")));
+        ui->tableWidget->setColumnWidth(2,80);
         ui->tableWidget->setHorizontalHeaderItem(3, new QTableWidgetItem(QString("Кол-во п/взводов")));
         ui->tableWidget->setColumnWidth(3,110);
         ui->tableWidget->setHorizontalHeaderItem(4, new QTableWidgetItem(QString("ВУС")));

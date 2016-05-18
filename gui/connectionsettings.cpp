@@ -29,17 +29,14 @@ void ConnectionSettings::on_buttonBox_accepted()
 
     QFile file("Settings.txt");
     if(file.open(QIODevice::WriteOnly|QIODevice::Text)){
-        while (!file.atEnd()) {
            QString str = Connect::dbName + QString(" ") +
                  Connect::dbIP + QString(" ") +
-                 Connect::dbPort + QString(" ") +
+                 QString::number(Connect::dbPort) + QString(" ") +
                  Connect::dbLogin + QString(" ") +
                  Connect::dbPassword ;
+                QTextStream out(&file);
+                out <<str;
+                file.close();
 
-                 QByteArray data;
-                 data.insert(0,str);
-                 file.write(data);
-                 file.close();
-        }
     }
 }

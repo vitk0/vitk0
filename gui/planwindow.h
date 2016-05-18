@@ -48,6 +48,8 @@ private slots:
 
     void on_platoonComboBox_currentIndexChanged(int index);
 
+    void on_pushButton_clicked();
+
 private:
     Ui::PlanWindow *ui;
 
