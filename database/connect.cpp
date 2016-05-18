@@ -11,7 +11,6 @@ int Connect::dbPort;
 
 Connect::Connect()
 {
-
 }
 
 void Connect::connect()
